@@ -1,0 +1,248 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  position: relative;
+  width: 100vw;
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: #f4f4f4;
+}
+
+.game_entitled {
+  position: relative;
+  width: 100vw;
+  height: 50px;
+  display: flex;
+}
+
+.gen_title {
+  position: relative;
+  padding: 0 0.5rem;
+  height: 40px;
+  color: #fff;
+  background-color: #096135;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.category_selection {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  gap: 0.5rem;
+}
+
+.input_category {
+  font-size: 0.95rem;
+  padding: 0.25rem;
+}
+
+/*showcase game*/
+
+.showcase_game {
+  width: 100vw;
+  display: flex;
+}
+
+.template_score {
+  padding: 1rem 0;
+}
+
+.current_step {
+  display: flex;
+  justify-content: center;
+}
+
+.wrap_main_img {
+  position: relative;
+  top: 2rem;
+  width: calc(24vw - 1rem);
+  height: 200px;
+}
+
+.wrap_main_img[data-selection="0"] {
+  width: calc(35vw - 1rem);
+  margin-left: 1.25rem;
+}
+
+.wrap_main_img[data-selection="1"] {
+  width: calc(27vw - 1rem);
+  margin-left: 1.5rem;
+}
+
+.wrap_main_img[data-selection="2"] {
+  width: calc(24vw - 1rem);
+  margin-left: 1rem;
+}
+
+.main_img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*score*/
+.score_in {
+  position: relative;
+  top: 2.8rem;
+  width: 114px;
+  max-width: 90px;
+  height: 32px;
+  margin: 0 auto;
+  color: #333;
+  background-color: #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.joystick_play_wrapper {
+  position: relative;
+  width: calc(100vw - 1.75rem);
+  /*  height: 200px; */
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+
+  /*  background-color: #096135; */
+}
+
+.entry_words {
+  position: relative;
+  left: 0;
+  width: 23.25rem;
+  height: 40px;
+}
+
+.entry_words[data-selection="0"] {
+  position: relative;
+  left: -1rem;
+  width: 19rem;
+}
+
+.entry_words[data-selection="1"] {
+  width: 21.25rem;
+}
+
+.entry_words[data-selection="2"] {
+  width: 23.25rem;
+}
+
+.wrapper_open {
+  width: 100%;
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.open_content {
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.mini_template {
+  width: 100%;
+  border: 1px solid brown;
+}
+
+.row {
+  width: 100%;
+  height: 37px;
+  display: flex;
+  align-items: center;
+}
+
+.row[data-selection="0"] {
+  display: flex;
+}
+
+.row[data-selection="1"] {
+  display: none;
+}
+
+.row[data-selection="2"] {
+  display: none;
+}
+
+.row .char_box {
+  width: 37px;
+  height: 32px;
+  margin: 0 0.1rem;
+  border: 1px solid green;
+}
+
+/*structure confirm*/
+
+.structure_confirm {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.entry_style {
+  width: 50%;
+  height: 20px;
+}
+
+.confirm_input {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn_confirm {
+  width: 35%;
+  height: 25px;
+  margin: 0 0.5rem;
+  font-size: 0.85rem;
+}
+
+.close_content {
+  padding-left: 0.25rem;
+}
+
+.restart_game {
+  position: relative;
+  top: 3.5rem;
+  width: 30%;
+  height: 100px;
+  /*  background-color: rgb(22, 22, 22); */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.btn_play_again {
+  height: 25px;
+  padding: 0 0.5rem;
+}
+
+.reset_input {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 0.5rem;
+}
+
+.btn_reset_game {
+  height: 25px;
+  padding: 0 0.5rem;
+}
