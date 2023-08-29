@@ -25,7 +25,7 @@ export const App = () => {
           </option>
         </select>
       </div>
-      <div className="showcase_game">
+      <div className="showcase_game" data-selection="2">
         <TemplateCharacters />
         <div className="template_score">
           <p className="current_step">
@@ -36,7 +36,7 @@ export const App = () => {
             / 8
           </p>
 
-          <div className="wrap_main_img" data-selection="0">
+          <div className="wrap_main_img" data-selection="2">
             <img src={COBRA} alt="picture missing" className="main_img" />
           </div>
           <div className="score_in">
@@ -51,7 +51,7 @@ export const App = () => {
         </div>
       </div>
       <div className="joystick_play_wrapper">
-        <div className="entry_words" data-selection="0">
+        <div className="entry_words" data-selection="2">
           <span className="wrapper_open">
             <div className="open_content">
               <span>word</span>

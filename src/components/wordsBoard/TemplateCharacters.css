@@ -10,23 +10,24 @@
 .template_2,
 .template_3 {
   position: relative;
-  width: 300px;
+  width: 19.25em;
   height: 300px;
   margin: 1rem 0;
   border: 1px solid brown;
-  display: block;
+  display: none;
   align-items: center;
 }
 
 .template_2 {
-  width: 340px;
-  /* font-weight: bold; */
+  width: 21.25em;
   display: none;
 }
 
 .template_3 {
-  width: 374px;
-  display: none;
+  /*  width: 374px; */
+  width: 23.4em;
+  display: block;
+  background-color: blue;
 }
 
 .row {
@@ -37,8 +38,37 @@
 }
 
 .row .char_box {
-  width: 37px;
+  width: 2.35em;
   height: 32px;
   margin: 0 0.1rem;
   border: 1px solid green;
+}
+
+@media (min-width: 872px) {
+  .template_1 {
+    width: 26em;
+  }
+
+  .template_1 .row .char_box {
+    width: 3.25em;
+    height: 36px;
+  }
+
+  .template_2 {
+    width: 26em;
+  }
+
+  .template_2 .row .char_box {
+    width: 3.25em;
+    height: 36px;
+  }
+
+  .template_3 {
+    width: 29em;
+  }
+
+  .template_3 .row .char_box {
+    width: 3.25em;
+    height: 36px;
+  }
 }
