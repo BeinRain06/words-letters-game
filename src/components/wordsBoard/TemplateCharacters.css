@@ -13,6 +13,7 @@
   width: 19.25em;
   height: 300px;
   margin: 1rem 0;
+  background-color: blue;
   border: 1px solid brown;
   display: none;
   align-items: center;
@@ -20,14 +21,16 @@
 
 .template_2 {
   width: 21.25em;
-  display: none;
 }
 
 .template_3 {
-  /*  width: 374px; */
   width: 23.4em;
+}
+
+.template_1.current,
+.template_2.current,
+.template_3.current {
   display: block;
-  background-color: blue;
 }
 
 .row {
