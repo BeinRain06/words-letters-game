@@ -1,5 +1,7 @@
 import React, { useState, useReducer, useRef, useEffect } from "react";
 import TemplateCharacters from "./components/wordsBoard/TemplateCharacters";
+import { WordsObject } from "./LibraryWords";
+import { NineCharactersWords } from "./LibraryWords";
 import { INITIAL_STATE, reducer } from "./reducer/WordsReducer";
 import { COBRA } from "./assets/images/index.js";
 import DOWN from "./chevron-down-solid.svg";
@@ -13,6 +15,7 @@ export const App = () => {
   const caseRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
+  let idTmp: number = 0;
 
   useEffect(() => {
     const category: number = state.category;
@@ -36,6 +39,67 @@ export const App = () => {
       }
     };
 
+    const discloseThreeCharacters = (): void => {
+      const category: number = state.category;
+      let arrayThreeFirstChar: WordsObject[] = [];
+      let arrayFillCharacters: WordsObject[] = [];
+
+      let arrayIndex: number[] = [];
+      if (category === 9) {
+        for (let i = 0; i < NineCharactersWords.length; i++) {
+          arrayIndex[i] = i;
+          arrayFillCharacters[i] = { id: i, word: "" };
+        }
+        let baseWords: WordsObject[] = NineCharactersWords.map((item) => item);
+
+        idTmp = Math.floor(Math.random() * arrayIndex.length);
+
+        //current right Words
+        let rightWord: WordsObject = baseWords[idTmp];
+        dispatch({ type: "CHANGE_CURRENT", payload: rightWord });
+
+        let rightWordArray = rightWord.word.split(" ");
+
+        // select first character
+        let a = arrayIndex[idTmp];
+        arrayThreeFirstChar.push({
+          id: a,
+          word: rightWordArray[a],
+        });
+        arrayFillCharacters[idTmp].word = rightWordArray[a];
+        arrayIndex.splice(idTmp, 1);
+
+        idTmp = Math.floor(Math.random() * arrayIndex.length);
+        // select second character
+        let b = arrayIndex[idTmp];
+        arrayThreeFirstChar.push({
+          id: b,
+          word: rightWordArray[b],
+        });
+        arrayFillCharacters[idTmp].word = rightWordArray[b];
+        arrayIndex.splice(idTmp, 1);
+
+        idTmp = Math.floor(Math.random() * arrayIndex.length);
+        // select third character
+        let c = arrayIndex[idTmp];
+        arrayThreeFirstChar.push({
+          id: c,
+          word: rightWordArray[c],
+        });
+        arrayFillCharacters[idTmp].word = rightWordArray[c];
+
+        //sort array three
+        let newThreeChar: WordsObject[] = arrayThreeFirstChar.sort(
+          (a, b) => a.id - b.id
+        );
+
+        dispatch({ type: "ADD_CHAR", payload: newThreeChar });
+        console.log("right word: ", state.rightWords);
+        console.log("three first char: ", state.threeFirstChar);
+      }
+    };
+
+    discloseThreeCharacters();
     miniTemplate(category);
   }, [state.category]);
 
@@ -93,7 +157,10 @@ export const App = () => {
         </select>
       </div>
       <div className="showcase_game" data-selection="1" ref={caseRef}>
-        <TemplateCharacters category={state.category} />
+        <TemplateCharacters
+          category={state.category}
+          threeFirstChar={state.threeFirstChar}
+        />
         <div className="template_score">
           <p className="current_step">
             move :{" "}
