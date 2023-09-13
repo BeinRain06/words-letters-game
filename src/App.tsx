@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useRef, useEffect } from "react";
 import TemplateCharacters from "./components/wordsBoard/TemplateCharacters";
-import { WordsObject } from "./LibraryWords";
+import { WordsObject, ComparisonType, WordTPlate } from "./LibraryWords";
 import { NineCharactersWords } from "./LibraryWords";
 import { INITIAL_STATE, reducer } from "./reducer/WordsReducer";
 import { COBRA } from "./assets/images/index.js";
@@ -15,7 +15,17 @@ export const App = () => {
   const caseRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const miniRowEight = useRef<HTMLDivElement>(null);
+  const miniRowNine = useRef<HTMLDivElement>(null);
+  const miniRowTen = useRef<HTMLDivElement>(null);
+  const warningRef = useRef<HTMLParagraphElement>(null);
   let idTmp: number = 0;
+  /* let inputConvertArray: string[] = [];
+  let miniSpanArray: Element[] = []; */
+  let newThreeChar: WordsObject[] = [];
+  let similarChar: ComparisonType[] = [];
+  let unlikeChar: ComparisonType[] = [];
 
   useEffect(() => {
     const category: number = state.category;
@@ -42,60 +52,51 @@ export const App = () => {
     const discloseThreeCharacters = (): void => {
       const category: number = state.category;
       let arrayThreeFirstChar: WordsObject[] = [];
-      let arrayFillCharacters: WordsObject[] = [];
 
-      let arrayIndex: number[] = [];
       if (category === 9) {
-        for (let i = 0; i < NineCharactersWords.length; i++) {
-          arrayIndex[i] = i;
-          arrayFillCharacters[i] = { id: i, word: "" };
-        }
         let baseWords: WordsObject[] = NineCharactersWords.map((item) => item);
 
-        idTmp = Math.floor(Math.random() * arrayIndex.length);
+        idTmp = Math.floor(Math.random() * baseWords.length);
 
-        //current right Words
-        let rightWord: WordsObject = baseWords[idTmp];
-        dispatch({ type: "CHANGE_CURRENT", payload: rightWord });
+        let rightWord: WordsObject = state.rightWords;
 
-        let rightWordArray = rightWord.word.split(" ");
+        console.log("right word abc", rightWord);
 
+        let rightWordArray: string[] = [];
+
+        for (let i = 0; i < rightWord.word.length; i++) {
+          rightWordArray[i] = rightWord.word.charAt(i);
+        }
+
+        idTmp = 1;
         // select first character
-        let a = arrayIndex[idTmp];
+        let a = idTmp;
         arrayThreeFirstChar.push({
           id: a,
           word: rightWordArray[a],
         });
-        arrayFillCharacters[idTmp].word = rightWordArray[a];
-        arrayIndex.splice(idTmp, 1);
 
-        idTmp = Math.floor(Math.random() * arrayIndex.length);
+        idTmp = 4;
         // select second character
-        let b = arrayIndex[idTmp];
+        let b = idTmp;
         arrayThreeFirstChar.push({
           id: b,
           word: rightWordArray[b],
         });
-        arrayFillCharacters[idTmp].word = rightWordArray[b];
-        arrayIndex.splice(idTmp, 1);
 
-        idTmp = Math.floor(Math.random() * arrayIndex.length);
+        idTmp = 6;
         // select third character
-        let c = arrayIndex[idTmp];
+        let c = idTmp;
         arrayThreeFirstChar.push({
           id: c,
           word: rightWordArray[c],
         });
-        arrayFillCharacters[idTmp].word = rightWordArray[c];
 
         //sort array three
-        let newThreeChar: WordsObject[] = arrayThreeFirstChar.sort(
-          (a, b) => a.id - b.id
-        );
+        newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
 
-        dispatch({ type: "ADD_CHAR", payload: newThreeChar });
-        console.log("right word: ", state.rightWords);
-        console.log("three first char: ", state.threeFirstChar);
+        dispatch({ type: "FIRST_CHAR", payload: newThreeChar });
+        console.log("three first: ", newThreeChar);
       }
     };
 
@@ -130,7 +131,106 @@ export const App = () => {
   };
 
   const handleWordEntered = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    let miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
+    let miniSpanArray: Element[] = [];
+
+    let inputConvertArray: string[] = [];
+
+    for (let i = 0; i < e.target.value.length; i++) {
+      inputConvertArray[i] = e.target.value.charAt(i);
+    }
+
+    console.log("input Array :", inputConvertArray);
+
+    if (miniRowElt !== undefined) {
+      for (let i = 0; i < miniRowElt.length; i++) {
+        miniSpanArray.push(miniRowElt[i]);
+      }
+    }
+
     console.log("input :", e.target.value);
+
+    if (inputConvertArray.length > state.category) {
+      warningRef.current?.classList.add("standing");
+      setTimeout(() => {
+        warningRef.current?.classList.remove("standing");
+      }, 2200);
+
+      for (let i = 0; i < state.category; i++) {
+        inputConvertArray[i] = e.target.value.charAt(i);
+      }
+
+      dispatch({
+        type: "CHANGE_INPUT",
+
+        payload: inputConvertArray,
+      });
+    } else {
+      dispatch({
+        type: "CHANGE_INPUT",
+        payload: inputConvertArray,
+      });
+    }
+
+    //reset mini-template span to empty value
+    for (let i = 0; i < miniSpanArray.length; i++) {
+      miniSpanArray[i].innerHTML = "";
+    }
+
+    inputConvertArray.map((char, index) => {
+      if (miniSpanArray[index] !== undefined) {
+        miniSpanArray[index].innerHTML = char;
+      }
+    });
+  };
+
+  const validateInput = (): void => {
+    let previousInputWord: string[] = state.wordEntered;
+    let currentRightWord: string[] = state.rightWordArray;
+    let threeFirstChar: any[] = state.threeFirstChar;
+    let wordPlate: WordTPlate[] = [];
+
+    if (previousInputWord.length === currentRightWord.length) {
+      for (let i = 0; i < currentRightWord.length; i++) {
+        if (currentRightWord[i] === previousInputWord[i]) {
+          if (
+            threeFirstChar[0].id === i ||
+            threeFirstChar[1].id === i ||
+            threeFirstChar[2].id === i
+          ) {
+            wordPlate.push({
+              id: i,
+              val: previousInputWord[i],
+              status: "given",
+              bg: "yellow",
+              rad: "50%",
+            });
+          } else {
+            wordPlate.push({
+              id: i,
+              val: previousInputWord[i],
+              status: "match",
+              bg: "green",
+              rad: "50%",
+            });
+          }
+        } else {
+          wordPlate.push({
+            id: i,
+            val: previousInputWord[i],
+            status: "unmatch",
+            bg: "red",
+            rad: "50%",
+          });
+        }
+      }
+    } else {
+      return;
+    }
+
+    dispatch({ type: "MATCH_CHAR", payload: wordPlate });
+
+    console.log("board word T:", wordPlate);
   };
 
   const templateProps = {
@@ -160,6 +260,7 @@ export const App = () => {
         <TemplateCharacters
           category={state.category}
           threeFirstChar={state.threeFirstChar}
+          wordEntered={state.wordEntered}
         />
         <div className="template_score">
           <p className="current_step">
@@ -212,6 +313,7 @@ export const App = () => {
             className={isOpen ? `mini_template show_template` : `mini_template`}
           >
             <div
+              ref={miniRowEight}
               className={state.category === 8 ? "mini_row active" : "mini_row"}
               data-selection="0"
             >
@@ -225,6 +327,7 @@ export const App = () => {
               <span id="7" className="char_box"></span>
             </div>
             <div
+              ref={miniRowNine}
               className={state.category === 9 ? "mini_row active" : "mini_row"}
               data-selection="1"
             >
@@ -239,6 +342,7 @@ export const App = () => {
               <span id="8" className="char_box"></span>
             </div>
             <div
+              ref={miniRowTen}
               className={state.category === 10 ? "mini_row active" : "mini_row"}
               data-selection="2"
             >
@@ -258,13 +362,22 @@ export const App = () => {
                 type="text"
                 id="word_entry"
                 className="entry_style"
-                value=""
+                ref={inputRef}
                 onChange={handleWordEntered}
-                placeholder="your_play"
+                placeholder="enter_word"
               />
 
+              <p ref={warningRef} className="warning_characters">
+                maxi characters exceeded !
+              </p>
+
               <div className="confirm_input">
-                <button type="button" id="btn_confirm" className="btn_confirm">
+                <button
+                  type="button"
+                  id="btn_confirm"
+                  className="btn_confirm"
+                  onClick={validateInput}
+                >
                   validate
                 </button>
               </div>
@@ -289,7 +402,6 @@ export const App = () => {
         <div className="restart_game">
           <div className="add_game">
             <button type="button" id="btn_play" className="btn_play_again">
-              {" "}
               PLAY AGAIN
             </button>
           </div>

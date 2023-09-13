@@ -205,25 +205,17 @@
     display: flex;
   }
 
-  .mini_row[data-selection="0"] .char_box {
-    width: 2.35em;
-    height: 32px;
-    margin: 0 0.1rem;
-    border: 1px solid green;
-  }
-
-  .mini_row[data-selection="1"] .char_box {
-    width: 2.35em;
-    height: 32px;
-    margin: 0 0.1rem;
-    border: 1px solid green;
-  }
-
+  .mini_row[data-selection="0"] .char_box,
+  .mini_row[data-selection="1"] .char_box,
   .mini_row[data-selection="2"] .char_box {
     width: 2.35em;
     height: 32px;
     margin: 0 0.1rem;
+    color: #fff;
     border: 1px solid green;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /*structure confirm*/
@@ -238,6 +230,21 @@
   .entry_style {
     width: 50%;
     height: 20px;
+    color: #333;
+  }
+
+  .warning_characters {
+    color: #c9b027;
+    font-size: 14px;
+    font-weight: bold;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 950ms ease-in-out;
+  }
+
+  .warning_characters.standing {
+    visibility: visible;
+    opacity: 1;
   }
 
   .confirm_input {
@@ -371,21 +378,6 @@
   .mini_row[data-selection="0"] .char_box {
     width: 2.6em;
     height: 36px;
-    /* margin: 0rem; */
-  }
-
-  .mini_row[data-selection="1"] .char_box {
-    width: 2.35em;
-    height: 32px;
-    margin: 0 0.1rem;
-    border: 1px solid green;
-  }
-
-  .mini_row[data-selection="2"] .char_box {
-    width: 2.35em;
-    height: 32px;
-    margin: 0 0.1rem;
-    border: 1px solid green;
   }
 
   .restart_game {

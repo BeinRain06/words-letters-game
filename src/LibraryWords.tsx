@@ -3,6 +3,19 @@ export interface WordsObject {
   word: string;
 }
 
+export interface ComparisonType {
+  id: number;
+  val: string;
+}
+
+export interface WordTPlate {
+  id: number;
+  val: string;
+  status: string;
+  bg: string;
+  rad: string;
+}
+
 export const NineCharactersWords: WordsObject[] = [
   {
     id: 0,

@@ -1,9 +1,20 @@
-import { WordsObject } from "../LibraryWords";
+import {
+  WordsObject,
+  ComparisonType,
+  WordTPlate,
+  NineCharactersWords,
+} from "../LibraryWords";
 
 type StateType = {
   category: number;
   rightWords: WordsObject;
+  rightWordArray: string[];
   threeFirstChar: any[];
+  wordEntered: string[];
+  /*  wordPlate: WordTPlate[]; */
+
+  /*  similarCharArray: ComparisonType[];
+  unlikeCharArray: ComparisonType[]; */
 };
 
 type CategoryActionType = {
@@ -18,23 +29,64 @@ type CurrentWordActionType = {
 };
 
 type FirstCharActionType = {
-  type: "ADD_CHAR";
+  type: "FIRST_CHAR";
   payload: WordsObject[];
+};
+
+type InputActionType = {
+  type: "CHANGE_INPUT";
+  payload: string[];
+};
+
+type SimilarCharActionType = {
+  type: "MATCH_CHAR";
+  payload: ComparisonType[];
+};
+
+type UnlikeCharActionType = {
+  type: "UNLIKE_CHAR";
+  payload: ComparisonType[];
+};
+
+type MatchActionType = {
+  type: "MATCH_CHAR";
+  payload: WordTPlate[];
 };
 
 type ActionType =
   | CategoryActionType
   | CurrentWordActionType
-  | FirstCharActionType;
+  | FirstCharActionType
+  | InputActionType
+  | MatchActionType;
+
+const initRightWord: WordsObject =
+  NineCharactersWords[Math.floor(Math.random() * NineCharactersWords.length)];
+
+const transformWordArray = (): string[] => {
+  let rightWordArray: string[] = [];
+
+  for (let i = 0; i < initRightWord.word.length; i++) {
+    rightWordArray[i] = initRightWord.word.charAt(i);
+  }
+
+  return rightWordArray;
+};
+
+let initRightWordArray: string[] = transformWordArray();
 
 export const INITIAL_STATE = {
   category: 9,
-  rightWords: { id: 7, word: "principle" },
+  rightWords: initRightWord,
+  rightWordArray: initRightWordArray,
   threeFirstChar: [
-    { id: 1, chr: "r" },
-    { id: 4, chr: "c" },
-    { id: 6, chr: "p" },
+    { id: 1, chr: initRightWordArray[1] },
+    { id: 4, chr: initRightWordArray[4] },
+    { id: 6, chr: initRightWordArray[6] },
   ],
+  wordEntered: [""],
+  /*  wordPlate: [{ id: 0, val: "c", status: "unmatch", bg: "red", rad: "50%" }], */
+  wordPlate: [{}],
 };
 
 export const reducer = (state: StateType, action: ActionType) => {
@@ -49,10 +101,21 @@ export const reducer = (state: StateType, action: ActionType) => {
         ...state,
         rightWords: action.payload,
       };
-    case "ADD_CHAR":
+    case "FIRST_CHAR":
       return {
         ...state,
         threeFirstChar: action.payload,
+      };
+    case "CHANGE_INPUT":
+      return {
+        ...state,
+        wordEntered: action.payload,
+      };
+
+    case "MATCH_CHAR":
+      return {
+        ...state,
+        wordPlate: action.payload,
       };
   }
 };

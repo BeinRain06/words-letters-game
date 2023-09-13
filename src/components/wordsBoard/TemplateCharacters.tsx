@@ -1,27 +1,26 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
+
+import { INITIAL_STATE, reducer } from "../../reducer/WordsReducer";
+
 import "./TemplateCharacters.css";
 
 export interface templateProps {
   category: number;
   threeFirstChar: any[];
+  wordEntered: string[];
 }
-
-/* const rowCurrent = (): void => {
-  const activeRow = document.querySelector(".row .active_row");
-
-  const arraycurrentRow = Array.from(activeRow.querySelectorAll(".char_box"));
-  console.log("current row", arraycurrentRow);
-};
-
-rowCurrent(); */
 
 const TemplateCharacters: React.FC<templateProps> = (props) => {
   const rowRefEight = useRef<HTMLDivElement>(null);
   const rowRefNine = useRef<HTMLDivElement>(null);
   const rowRefTen = useRef<HTMLDivElement>(null);
 
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+
+  let spanArrayCurrentRow: Element[] = [];
+
   useEffect(() => {
-    const displayThreeChar = (): void => {
+    const createArraySpanRow = (): Element[] => {
       let currentRow = rowRefNine.current?.querySelectorAll(".char_box");
 
       console.log("props three:", props.threeFirstChar);
@@ -33,20 +32,59 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
         }
       }
 
-      props.threeFirstChar.map((item, index) => {
-        spanArrayCurrentRow.forEach((span) => {
-          if (+span.id === item.id) {
-            console.log("span bb", span.id);
-            span.innerHTML = item.chr;
-          }
-        });
-      });
+      return spanArrayCurrentRow;
+    };
+
+    const displayThreeChar = (): void => {
+      spanArrayCurrentRow = createArraySpanRow();
+
+      for (let i = 0; i < spanArrayCurrentRow.length; i++) {
+        spanArrayCurrentRow[i].innerHTML = "";
+      }
+
+      console.log("three 3", props.threeFirstChar);
+
+      spanArrayCurrentRow[1].innerHTML = props.threeFirstChar[0].word;
+
+      spanArrayCurrentRow[4].innerHTML = props.threeFirstChar[1].word;
+
+      spanArrayCurrentRow[6].innerHTML = props.threeFirstChar[2].word;
 
       console.log("span Array Current Row", spanArrayCurrentRow);
     };
 
-    displayThreeChar();
-  }, []);
+    const primarDisplayThreeChar = (): void => {
+      spanArrayCurrentRow = createArraySpanRow();
+
+      if (props.wordEntered.length === 1) {
+        spanArrayCurrentRow[1].innerHTML = props.threeFirstChar[0].chr;
+
+        spanArrayCurrentRow[4].innerHTML = props.threeFirstChar[1].chr;
+
+        spanArrayCurrentRow[6].innerHTML = props.threeFirstChar[2].chr;
+      }
+    };
+
+    if (props.wordEntered.length !== 0) {
+      let wordEntered = props.wordEntered;
+
+      spanArrayCurrentRow = createArraySpanRow();
+
+      for (let i = 0; i < spanArrayCurrentRow.length; i++) {
+        spanArrayCurrentRow[i].innerHTML = "";
+      }
+
+      wordEntered.map((char, index) => {
+        if (spanArrayCurrentRow[index] !== undefined) {
+          spanArrayCurrentRow[index].innerHTML = char;
+        }
+      });
+    } else {
+      displayThreeChar();
+    }
+
+    primarDisplayThreeChar();
+  }, [props.wordEntered]);
 
   return (
     <div className="wrapper_template">
