@@ -230,7 +230,11 @@ export const App = () => {
 
     dispatch({ type: "MATCH_CHAR", payload: wordPlate });
 
-    console.log("board word T:", wordPlate);
+    dispatch({ type: "VALIDATE_CHANGE" });
+
+    dispatch({ type: "RECORD_WORDPLATE", payload: wordPlate });
+
+    console.log("board word T:", state.arraywordPlateRecord);
   };
 
   const templateProps = {
@@ -261,10 +265,11 @@ export const App = () => {
           category={state.category}
           threeFirstChar={state.threeFirstChar}
           wordEntered={state.wordEntered}
+          count={state.count}
         />
         <div className="template_score">
           <p className="current_step">
-            move :{" "}
+            move :
             <span className="count_move" data-switch-img="1">
               1
             </span>

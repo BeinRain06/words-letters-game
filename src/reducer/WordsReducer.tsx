@@ -11,7 +11,9 @@ type StateType = {
   rightWordArray: string[];
   threeFirstChar: any[];
   wordEntered: string[];
-  /*  wordPlate: WordTPlate[]; */
+  count: number;
+  wordPlate: any[];
+  arraywordPlateRecord: any;
 
   /*  similarCharArray: ComparisonType[];
   unlikeCharArray: ComparisonType[]; */
@@ -38,10 +40,10 @@ type InputActionType = {
   payload: string[];
 };
 
-type SimilarCharActionType = {
+/* type SimilarCharActionType = {
   type: "MATCH_CHAR";
   payload: ComparisonType[];
-};
+}; */
 
 type UnlikeCharActionType = {
   type: "UNLIKE_CHAR";
@@ -53,12 +55,23 @@ type MatchActionType = {
   payload: WordTPlate[];
 };
 
+type ValidateActionType = {
+  type: "VALIDATE_CHANGE";
+};
+
+type recordWordPlateActionType = {
+  type: "RECORD_WORDPLATE";
+  payload: WordTPlate[];
+};
+
 type ActionType =
   | CategoryActionType
   | CurrentWordActionType
   | FirstCharActionType
   | InputActionType
-  | MatchActionType;
+  | MatchActionType
+  | ValidateActionType
+  | recordWordPlateActionType;
 
 const initRightWord: WordsObject =
   NineCharactersWords[Math.floor(Math.random() * NineCharactersWords.length)];
@@ -80,13 +93,15 @@ export const INITIAL_STATE = {
   rightWords: initRightWord,
   rightWordArray: initRightWordArray,
   threeFirstChar: [
-    { id: 1, chr: initRightWordArray[1] },
-    { id: 4, chr: initRightWordArray[4] },
-    { id: 6, chr: initRightWordArray[6] },
+    { id: 1, word: initRightWordArray[1] },
+    { id: 4, word: initRightWordArray[4] },
+    { id: 6, word: initRightWordArray[6] },
   ],
   wordEntered: [""],
   /*  wordPlate: [{ id: 0, val: "c", status: "unmatch", bg: "red", rad: "50%" }], */
   wordPlate: [{}],
+  arraywordPlateRecord: [],
+  count: 2,
 };
 
 export const reducer = (state: StateType, action: ActionType) => {
@@ -116,6 +131,19 @@ export const reducer = (state: StateType, action: ActionType) => {
       return {
         ...state,
         wordPlate: action.payload,
+      };
+
+    case "VALIDATE_CHANGE":
+      return {
+        ...state,
+        count: state.count + 1,
+      };
+
+    case "RECORD_WORDPLATE":
+      return {
+        ...state,
+        /*     arraywordPlateRecord: state.arraywordPlateRecord.push(action.payload), */
+        arraywordPlateRecord: action.payload,
       };
   }
 };

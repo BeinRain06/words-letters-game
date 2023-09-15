@@ -8,83 +8,95 @@ export interface templateProps {
   category: number;
   threeFirstChar: any[];
   wordEntered: string[];
+  count: number;
 }
 
 const TemplateCharacters: React.FC<templateProps> = (props) => {
   const rowRefEight = useRef<HTMLDivElement>(null);
-  const rowRefNine = useRef<HTMLDivElement>(null);
+  /*  const rowsRefNine = useRef<HTMLDivElement>(null); */
+
+  const rowRefNine1 = useRef<HTMLDivElement>(null);
+  const rowRefNine2 = useRef<HTMLDivElement>(null);
+  const rowRefNine3 = useRef<HTMLDivElement>(null);
+  const rowRefNine4 = useRef<HTMLDivElement>(null);
+  const rowRefNine5 = useRef<HTMLDivElement>(null);
+  const rowRefNine6 = useRef<HTMLDivElement>(null);
+  const rowRefNine7 = useRef<HTMLDivElement>(null);
+  const rowRefNine8 = useRef<HTMLDivElement>(null);
+
+  const rowsRefNiNe = [
+    rowRefNine1,
+    rowRefNine2,
+    rowRefNine3,
+    rowRefNine4,
+    rowRefNine5,
+    rowRefNine6,
+    rowRefNine7,
+    rowRefNine8,
+  ];
+
   const rowRefTen = useRef<HTMLDivElement>(null);
 
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  let spanArrayCurrentRow: Element[] = [];
+  /* let currentRow: any; */
+  let spanArrayCurrentRow: HTMLElement[] = [];
 
   useEffect(() => {
-    const createArraySpanRow = (): Element[] => {
-      let currentRow = rowRefNine.current?.querySelectorAll(".char_box");
+    /* let spanArrayCurrentRow: HTMLElement[] = []; */
+    const createArraySpanRow = (): HTMLElement[] => {
+      let currentRow =
+        rowsRefNiNe[0].current?.querySelectorAll<HTMLElement>(".char_box");
 
-      console.log("props three:", props.threeFirstChar);
-      let spanArrayCurrentRow: Element[] = [];
+      let spanArrayCurrentRow: HTMLElement[] = [];
 
-      if (currentRow !== undefined) {
-        for (let i = 0; i < currentRow.length; i++) {
-          spanArrayCurrentRow.push(currentRow[i]);
-        }
+      for (let i = 0; i < currentRow.length; i++) {
+        spanArrayCurrentRow.push(currentRow[i]);
       }
-
+      console.log("a b c d", spanArrayCurrentRow);
       return spanArrayCurrentRow;
     };
 
-    const displayThreeChar = (): void => {
-      spanArrayCurrentRow = createArraySpanRow();
-
-      for (let i = 0; i < spanArrayCurrentRow.length; i++) {
-        spanArrayCurrentRow[i].innerHTML = "";
-      }
-
-      console.log("three 3", props.threeFirstChar);
-
-      spanArrayCurrentRow[1].innerHTML = props.threeFirstChar[0].word;
-
-      spanArrayCurrentRow[4].innerHTML = props.threeFirstChar[1].word;
-
-      spanArrayCurrentRow[6].innerHTML = props.threeFirstChar[2].word;
-
-      console.log("span Array Current Row", spanArrayCurrentRow);
-    };
-
-    const primarDisplayThreeChar = (): void => {
-      spanArrayCurrentRow = createArraySpanRow();
-
+    const firstThreeChar = (): void => {
       if (props.wordEntered.length === 1) {
-        spanArrayCurrentRow[1].innerHTML = props.threeFirstChar[0].chr;
+        spanArrayCurrentRow = createArraySpanRow();
 
-        spanArrayCurrentRow[4].innerHTML = props.threeFirstChar[1].chr;
+        for (let i = 0; i < spanArrayCurrentRow.length; i++) {
+          spanArrayCurrentRow[i].innerHTML = "";
+        }
+        console.log("props three char", props.threeFirstChar);
 
-        spanArrayCurrentRow[6].innerHTML = props.threeFirstChar[2].chr;
+        spanArrayCurrentRow[1].innerHTML = props.threeFirstChar[0].word;
+
+        console.log("akat suki ball", spanArrayCurrentRow[1].innerHTML);
+
+        spanArrayCurrentRow[4].innerHTML = props.threeFirstChar[1].word;
+
+        spanArrayCurrentRow[6].innerHTML = props.threeFirstChar[2].word;
       }
     };
 
-    if (props.wordEntered.length !== 0) {
-      let wordEntered = props.wordEntered;
-
+    const displayChar = (): void => {
       spanArrayCurrentRow = createArraySpanRow();
-
       for (let i = 0; i < spanArrayCurrentRow.length; i++) {
         spanArrayCurrentRow[i].innerHTML = "";
       }
+      let wordEntered = props.wordEntered;
 
       wordEntered.map((char, index) => {
         if (spanArrayCurrentRow[index] !== undefined) {
           spanArrayCurrentRow[index].innerHTML = char;
         }
       });
-    } else {
-      displayThreeChar();
+    };
+
+    if (props.wordEntered.length > 1) {
+      console.log("props word Entered length", props.wordEntered.length);
+      displayChar();
     }
 
-    primarDisplayThreeChar();
-  }, [props.wordEntered]);
+    firstThreeChar();
+  }, [props.wordEntered, props.count]);
 
   return (
     <div className="wrapper_template">
@@ -181,9 +193,28 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       <div
         className={props.category === 9 ? "template_2 current" : "template_2"}
       >
+        {/*  {templateSpanRow.map((item, i) => (
+          <div
+            id={i.toString()}
+            ref={(el) => (rowsRefNine.current[i] = el)}
+            className="row active_row"
+            data-name="nine_char"
+          >
+            <span id="0" className="char_box"></span>
+            <span id="1" className="char_box"></span>
+            <span id="2" className="char_box"></span>
+            <span id="3" className="char_box"></span>
+            <span id="4" className="char_box"></span>
+            <span id="5" className="char_box"></span>
+            <span id="6" className="char_box"></span>
+            <span id="7" className="char_box"></span>
+            <span id="8" className="char_box"></span>
+          </div>
+        ))} */}
+        {/* ref={(el: HTMLDivElement) => rowsRefNine.current.push(el!)} */}
         <div
           id="0"
-          ref={rowRefNine}
+          ref={rowRefNine1}
           className="row active_row"
           data-name="nine_char"
         >
@@ -197,7 +228,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           <span id="7" className="char_box"></span>
           <span id="8" className="char_box"></span>
         </div>
-        <div id="1" className="row" data-name="nine_char">
+        <div id="1" ref={rowRefNine2} className="row" data-name="nine_char">
           <span id="0" className="char_box"></span>
           <span id="1" className="char_box"></span>
           <span id="2" className="char_box"></span>
@@ -208,7 +239,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           <span id="7" className="char_box"></span>
           <span id="8" className="char_box"></span>
         </div>
-        <div id="2" className="row" data-name="nine_char">
+        <div id="2" ref={rowRefNine3} className="row" data-name="nine_char">
           <span id="0" className="char_box"></span>
           <span id="1" className="char_box"></span>
           <span id="2" className="char_box"></span>
@@ -219,7 +250,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           <span id="7" className="char_box"></span>
           <span id="8" className="char_box"></span>
         </div>
-        <div id="3" className="row" data-name="nine_char">
+        <div id="3" ref={rowRefNine4} className="row" data-name="nine_char">
           <span id="0" className="char_box"></span>
           <span id="1" className="char_box"></span>
           <span id="2" className="char_box"></span>
@@ -230,7 +261,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           <span id="7" className="char_box"></span>
           <span id="8" className="char_box"></span>
         </div>
-        <div id="4" className="row" data-name="nine_char">
+        <div id="4" ref={rowRefNine5} className="row" data-name="nine_char">
           <span id="0" className="char_box"></span>
           <span id="1" className="char_box"></span>
           <span id="2" className="char_box"></span>
@@ -241,7 +272,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           <span id="7" className="char_box"></span>
           <span id="8" className="char_box"></span>
         </div>
-        <div id="5" className="row" data-name="nine_char">
+        <div id="5" ref={rowRefNine6} className="row" data-name="nine_char">
           <span id="0" className="char_box"></span>
           <span id="1" className="char_box"></span>
           <span id="2" className="char_box"></span>
@@ -252,7 +283,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           <span id="7" className="char_box"></span>
           <span id="8" className="char_box"></span>
         </div>
-        <div id="6" className="row" data-name="nine_char">
+        <div id="6" ref={rowRefNine7} className="row" data-name="nine_char">
           <span id="0" className="char_box"></span>
           <span id="1" className="char_box"></span>
           <span id="2" className="char_box"></span>
@@ -263,7 +294,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           <span id="7" className="char_box"></span>
           <span id="8" className="char_box"></span>
         </div>
-        <div id="7" className="row" data-name="nine_char">
+        <div id="7" ref={rowRefNine8} className="row" data-name="nine_char">
           <span id="0" className="char_box"></span>
           <span id="1" className="char_box"></span>
           <span id="2" className="char_box"></span>
