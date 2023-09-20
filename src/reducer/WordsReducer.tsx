@@ -12,11 +12,9 @@ type StateType = {
   threeFirstChar: any[];
   wordEntered: string[];
   count: number;
+  countBoo: boolean;
   wordPlate: any[];
   arraywordPlateRecord: any;
-
-  /*  similarCharArray: ComparisonType[];
-  unlikeCharArray: ComparisonType[]; */
 };
 
 type CategoryActionType = {
@@ -56,10 +54,15 @@ type MatchActionType = {
 };
 
 type ValidateActionType = {
-  type: "VALIDATE_CHANGE";
+  type: "VALIDATE_CHANGE" | "VALIDATE_BOOLEAN";
 };
 
-type recordWordPlateActionType = {
+/* type ValidateBooActionType = {
+  type: "VALIDATE_BOOLEAN";
+  payload: boolean;
+}; */
+
+type RecordWordPlateActionType = {
   type: "RECORD_WORDPLATE";
   payload: WordTPlate[];
 };
@@ -71,7 +74,7 @@ type ActionType =
   | InputActionType
   | MatchActionType
   | ValidateActionType
-  | recordWordPlateActionType;
+  | RecordWordPlateActionType;
 
 const initRightWord: WordsObject =
   NineCharactersWords[Math.floor(Math.random() * NineCharactersWords.length)];
@@ -97,11 +100,12 @@ export const INITIAL_STATE = {
     { id: 4, word: initRightWordArray[4] },
     { id: 6, word: initRightWordArray[6] },
   ],
-  wordEntered: [""],
+  wordEntered: [],
   /*  wordPlate: [{ id: 0, val: "c", status: "unmatch", bg: "red", rad: "50%" }], */
   wordPlate: [{}],
   arraywordPlateRecord: [],
-  count: 2,
+  count: 0,
+  countBoo: false,
 };
 
 export const reducer = (state: StateType, action: ActionType) => {
@@ -139,11 +143,16 @@ export const reducer = (state: StateType, action: ActionType) => {
         count: state.count + 1,
       };
 
+    case "VALIDATE_BOOLEAN":
+      return {
+        ...state,
+        countBoo: !state.countBoo,
+      };
+
     case "RECORD_WORDPLATE":
       return {
         ...state,
-        /*     arraywordPlateRecord: state.arraywordPlateRecord.push(action.payload), */
-        arraywordPlateRecord: action.payload,
+        arraywordPlateRecord: state.arraywordPlateRecord.push(action.payload),
       };
   }
 };

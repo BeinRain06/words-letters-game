@@ -1,8 +1,16 @@
-import React, { useState, useReducer, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useReducer,
+  useRef,
+  useEffect,
+  useContext,
+} from "react";
 import TemplateCharacters from "./components/wordsBoard/TemplateCharacters";
 import { WordsObject, ComparisonType, WordTPlate } from "./LibraryWords";
 import { NineCharactersWords } from "./LibraryWords";
 import { INITIAL_STATE, reducer } from "./reducer/WordsReducer";
+import { userGameContext } from "./context/GameContext";
+import { GameProvider } from "./context/GameContext";
 import { COBRA } from "./assets/images/index.js";
 import DOWN from "./chevron-down-solid.svg";
 import UP from "./chevron-up-solid.svg";
@@ -11,7 +19,27 @@ import "./App.css";
 export const App = () => {
   const [isOpen, setOpen] = useState<boolean>(false);
 
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const {
+    state: {
+      category,
+      count,
+      countBoo,
+      threeFirstChar,
+      wordEntered,
+      rightWords,
+      rightWordArray,
+      wordPlate,
+      arraywordPlateRecord,
+    },
+    handleCategory,
+    changeCount,
+    changeBooleanCount,
+    handleFirstChar,
+    handleChangeInput,
+    handleMatchingChar,
+    handleWordTemplate,
+  } = useContext(userGameContext);
+
   const caseRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
@@ -21,14 +49,10 @@ export const App = () => {
   const miniRowTen = useRef<HTMLDivElement>(null);
   const warningRef = useRef<HTMLParagraphElement>(null);
   let idTmp: number = 0;
-  /* let inputConvertArray: string[] = [];
-  let miniSpanArray: Element[] = []; */
+
   let newThreeChar: WordsObject[] = [];
-  let similarChar: ComparisonType[] = [];
-  let unlikeChar: ComparisonType[] = [];
 
   useEffect(() => {
-    const category: number = state.category;
     const miniTemplate = (category): void => {
       switch (category) {
         case 8:
@@ -50,7 +74,6 @@ export const App = () => {
     };
 
     const discloseThreeCharacters = (): void => {
-      const category: number = state.category;
       let arrayThreeFirstChar: WordsObject[] = [];
 
       if (category === 9) {
@@ -58,14 +81,10 @@ export const App = () => {
 
         idTmp = Math.floor(Math.random() * baseWords.length);
 
-        let rightWord: WordsObject = state.rightWords;
+        console.log("right word abc", rightWords);
 
-        console.log("right word abc", rightWord);
-
-        let rightWordArray: string[] = [];
-
-        for (let i = 0; i < rightWord.word.length; i++) {
-          rightWordArray[i] = rightWord.word.charAt(i);
+        for (let i = 0; i < rightWords.word.length; i++) {
+          rightWordArray[i] = rightWords.word.charAt(i);
         }
 
         idTmp = 1;
@@ -95,14 +114,15 @@ export const App = () => {
         //sort array three
         newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
 
-        dispatch({ type: "FIRST_CHAR", payload: newThreeChar });
+        handleFirstChar(newThreeChar);
+
         console.log("three first: ", newThreeChar);
       }
     };
 
     discloseThreeCharacters();
     miniTemplate(category);
-  }, [state.category]);
+  }, [category]);
 
   const showDisplay = (e: React.MouseEvent): void => {
     console.log("target : ", e.target);
@@ -121,26 +141,16 @@ export const App = () => {
     entryWords: document.querySelector(".entry_words"),
   };
 
-  const handleCategory = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-    console.log("value:", e.target.value);
-    dispatch({
-      type: "CHANGE_CATEGORY",
-      field: e.target.name,
-      data: e.target.value,
-    });
-  };
-
   const handleWordEntered = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
     let miniSpanArray: Element[] = [];
 
     let inputConvertArray: string[] = [];
+    let areaWordMoveRecord: any[] = [];
 
     for (let i = 0; i < e.target.value.length; i++) {
       inputConvertArray[i] = e.target.value.charAt(i);
     }
-
-    console.log("input Array :", inputConvertArray);
 
     if (miniRowElt !== undefined) {
       for (let i = 0; i < miniRowElt.length; i++) {
@@ -148,28 +158,19 @@ export const App = () => {
       }
     }
 
-    console.log("input :", e.target.value);
-
-    if (inputConvertArray.length > state.category) {
+    if (inputConvertArray.length > category) {
       warningRef.current?.classList.add("standing");
       setTimeout(() => {
         warningRef.current?.classList.remove("standing");
       }, 2200);
 
-      for (let i = 0; i < state.category; i++) {
+      for (let i = 0; i < category; i++) {
         inputConvertArray[i] = e.target.value.charAt(i);
       }
 
-      dispatch({
-        type: "CHANGE_INPUT",
-
-        payload: inputConvertArray,
-      });
+      handleChangeInput(inputConvertArray);
     } else {
-      dispatch({
-        type: "CHANGE_INPUT",
-        payload: inputConvertArray,
-      });
+      handleChangeInput(inputConvertArray);
     }
 
     //reset mini-template span to empty value
@@ -185,10 +186,8 @@ export const App = () => {
   };
 
   const validateInput = (): void => {
-    let previousInputWord: string[] = state.wordEntered;
-    let currentRightWord: string[] = state.rightWordArray;
-    let threeFirstChar: any[] = state.threeFirstChar;
-    let wordPlate: WordTPlate[] = [];
+    let previousInputWord: string[] = wordEntered;
+    let currentRightWord: string[] = rightWordArray;
 
     if (previousInputWord.length === currentRightWord.length) {
       for (let i = 0; i < currentRightWord.length; i++) {
@@ -224,21 +223,24 @@ export const App = () => {
           });
         }
       }
+
+      arraywordPlateRecord.push(wordPlate);
+
+      if (inputRef.current !== null) {
+        inputRef.current.value = "";
+      }
     } else {
       return;
     }
 
-    dispatch({ type: "MATCH_CHAR", payload: wordPlate });
+    handleMatchingChar(wordPlate);
 
-    dispatch({ type: "VALIDATE_CHANGE" });
+    changeCount();
+    changeBooleanCount();
 
-    dispatch({ type: "RECORD_WORDPLATE", payload: wordPlate });
+    handleWordTemplate(arraywordPlateRecord);
 
-    console.log("board word T:", state.arraywordPlateRecord);
-  };
-
-  const templateProps = {
-    category: state.category,
+    /* console.log("board word T:", arraywordPlateRecord); */
   };
 
   return (
@@ -261,12 +263,22 @@ export const App = () => {
         </select>
       </div>
       <div className="showcase_game" data-selection="1" ref={caseRef}>
-        <TemplateCharacters
+        {/* <TemplateCharacters
           category={state.category}
           threeFirstChar={state.threeFirstChar}
           wordEntered={state.wordEntered}
           count={state.count}
+          countBoo={state.countBoo}
+        /> */}
+
+        <TemplateCharacters
+          category={category}
+          threeFirstChar={threeFirstChar}
+          wordEntered={wordEntered}
+          count={count}
+          countBoo={countBoo}
         />
+
         <div className="template_score">
           <p className="current_step">
             move :
@@ -319,7 +331,7 @@ export const App = () => {
           >
             <div
               ref={miniRowEight}
-              className={state.category === 8 ? "mini_row active" : "mini_row"}
+              className={category === 8 ? "mini_row active" : "mini_row"}
               data-selection="0"
             >
               <span id="0" className="char_box"></span>
@@ -333,7 +345,7 @@ export const App = () => {
             </div>
             <div
               ref={miniRowNine}
-              className={state.category === 9 ? "mini_row active" : "mini_row"}
+              className={category === 9 ? "mini_row active" : "mini_row"}
               data-selection="1"
             >
               <span id="0" className="char_box"></span>
@@ -348,7 +360,7 @@ export const App = () => {
             </div>
             <div
               ref={miniRowTen}
-              className={state.category === 10 ? "mini_row active" : "mini_row"}
+              className={category === 10 ? "mini_row active" : "mini_row"}
               data-selection="2"
             >
               <span id="0" className="char_box"></span>

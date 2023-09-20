@@ -1,6 +1,7 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useEffect, useReducer, useRef, useContext } from "react";
 
 import { INITIAL_STATE, reducer } from "../../reducer/WordsReducer";
+import { userGameContext } from "../../context/GameContext";
 
 import "./TemplateCharacters.css";
 
@@ -9,9 +10,37 @@ export interface templateProps {
   threeFirstChar: any[];
   wordEntered: string[];
   count: number;
+  countBoo: boolean;
 }
 
+{
+  /* ref={(el: HTMLDivElement) => rowsRefNine.current.push(el!)} */
+}
+
+/* const TemplateCharacters: React.FC<templateProps> = (props) => {...} */
+
 const TemplateCharacters: React.FC<templateProps> = (props) => {
+  const {
+    state: {
+      category,
+      count,
+      countBoo,
+      threeFirstChar,
+      wordEntered,
+      rightWords,
+      rightWordArray,
+      wordPlate,
+      arraywordPlateRecord,
+    },
+    handleCategory,
+    changeCount,
+    changeBooleanCount,
+    handleFirstChar,
+    handleChangeInput,
+    handleMatchingChar,
+    handleWordTemplate,
+  } = useContext(userGameContext);
+
   const rowRefEight = useRef<HTMLDivElement>(null);
   /*  const rowsRefNine = useRef<HTMLDivElement>(null); */
 
@@ -37,51 +66,67 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
 
   const rowRefTen = useRef<HTMLDivElement>(null);
 
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  /*  const [state, dispatch] = useReducer(reducer, INITIAL_STATE); */
 
-  /* let currentRow: any; */
   let spanArrayCurrentRow: HTMLElement[] = [];
 
   useEffect(() => {
-    /* let spanArrayCurrentRow: HTMLElement[] = []; */
-    const createArraySpanRow = (): HTMLElement[] => {
-      let currentRow =
-        rowsRefNiNe[0].current?.querySelectorAll<HTMLElement>(".char_box");
+    let n = count;
+    let currentRow;
+
+    const createArraySpanRow = (n): HTMLElement[] => {
+      currentRow =
+        rowsRefNiNe[n].current?.querySelectorAll<HTMLElement>(".char_box");
+
+      console.log(" rowRefNine step", rowsRefNiNe[n].current);
 
       let spanArrayCurrentRow: HTMLElement[] = [];
 
       for (let i = 0; i < currentRow.length; i++) {
         spanArrayCurrentRow.push(currentRow[i]);
       }
-      console.log("a b c d", spanArrayCurrentRow);
+      return spanArrayCurrentRow;
+    };
+
+    const validateSpanArrayRow = (n) => {
+      let spanArrayCurrentRow: HTMLElement[] = [];
+      if (n !== 0) {
+        let currentRow;
+        currentRow =
+          rowsRefNiNe[n - 1].current?.querySelectorAll<HTMLElement>(
+            ".char_box"
+          );
+
+        for (let i = 0; i < currentRow.length; i++) {
+          spanArrayCurrentRow.push(currentRow[i]);
+        }
+      }
+
       return spanArrayCurrentRow;
     };
 
     const firstThreeChar = (): void => {
-      if (props.wordEntered.length === 1) {
-        spanArrayCurrentRow = createArraySpanRow();
+      if (wordEntered.length === 0) {
+        spanArrayCurrentRow = createArraySpanRow(n);
 
         for (let i = 0; i < spanArrayCurrentRow.length; i++) {
           spanArrayCurrentRow[i].innerHTML = "";
         }
-        console.log("props three char", props.threeFirstChar);
+        console.log("props three char", threeFirstChar);
 
-        spanArrayCurrentRow[1].innerHTML = props.threeFirstChar[0].word;
+        spanArrayCurrentRow[1].innerHTML = threeFirstChar[0].word;
 
-        console.log("akat suki ball", spanArrayCurrentRow[1].innerHTML);
+        spanArrayCurrentRow[4].innerHTML = threeFirstChar[1].word;
 
-        spanArrayCurrentRow[4].innerHTML = props.threeFirstChar[1].word;
-
-        spanArrayCurrentRow[6].innerHTML = props.threeFirstChar[2].word;
+        spanArrayCurrentRow[6].innerHTML = threeFirstChar[2].word;
       }
     };
 
     const displayChar = (): void => {
-      spanArrayCurrentRow = createArraySpanRow();
+      spanArrayCurrentRow = createArraySpanRow(n);
       for (let i = 0; i < spanArrayCurrentRow.length; i++) {
         spanArrayCurrentRow[i].innerHTML = "";
       }
-      let wordEntered = props.wordEntered;
 
       wordEntered.map((char, index) => {
         if (spanArrayCurrentRow[index] !== undefined) {
@@ -90,19 +135,114 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       });
     };
 
-    if (props.wordEntered.length > 1) {
-      console.log("props word Entered length", props.wordEntered.length);
-      displayChar();
-    }
+    const validateChange = (): void => {
+      let n = count;
 
+      let spanArrayCurrentRow: HTMLElement[] = [];
+
+      spanArrayCurrentRow = validateSpanArrayRow(n);
+
+      console.log("count val", n);
+      console.log("countBoo val", countBoo);
+
+      if (countBoo && category === 9) {
+        console.log("props count", props.count);
+
+        for (let i = 0; i < spanArrayCurrentRow.length; i++) {
+          spanArrayCurrentRow[i].style.visibility = "hidden";
+        }
+
+        console.log("entring validate whatever the case");
+        console.log("wordplate please", wordPlate);
+        console.log("array wordPlate", arraywordPlateRecord);
+
+        if (n !== 0) {
+          arraywordPlateRecord[n - 1].map((char, index) => {
+            setTimeout(() => {}, 5000);
+            setTimeout(() => {
+              if (char.status === "match") {
+                spanArrayCurrentRow[index].style.visibility = "visible";
+                spanArrayCurrentRow[index].style.background =
+                  "rgb(30, 143, 30)";
+              } else if (char.status === "given") {
+                spanArrayCurrentRow[index].style.visibility = "visible";
+                spanArrayCurrentRow[index].style.background =
+                  "rgb(212, 212, 43)";
+              } else if (char.status === "unmatch") {
+                spanArrayCurrentRow[index].style.visibility = "visible";
+                spanArrayCurrentRow[index].style.background = "brown";
+              }
+            }, 2000);
+          });
+
+          let spanArrayCurrentRowNext: HTMLElement[] = [];
+
+          spanArrayCurrentRowNext = createArraySpanRow(n);
+
+          for (let i = 0; i < spanArrayCurrentRowNext.length; i++) {
+            spanArrayCurrentRowNext[i].innerHTML = "";
+          }
+
+          console.log("array span Next", spanArrayCurrentRowNext);
+
+          arraywordPlateRecord[n - 1].map((char, index) => {
+            setTimeout(() => {}, 5000);
+            setTimeout(() => {
+              if (char.status === "match" || char.status === "given") {
+                spanArrayCurrentRowNext[index].innerHTML = char.val;
+              } else if (char.status === "unmatch") {
+                let unmatch;
+                let a: boolean = threeFirstChar[0].id === index;
+                let b: boolean = threeFirstChar[1].id === index;
+                let c: boolean = threeFirstChar[2].id === index;
+
+                switch (unmatch) {
+                  case a:
+                    spanArrayCurrentRowNext[index].innerHTML =
+                      threeFirstChar[0].word;
+                    break;
+
+                  case b:
+                    spanArrayCurrentRowNext[index].innerHTML =
+                      threeFirstChar[1].word;
+                    break;
+
+                  case c:
+                    spanArrayCurrentRowNext[index].innerHTML =
+                      threeFirstChar[2].word;
+                    break;
+                  default:
+                    break;
+                }
+
+                if (
+                  threeFirstChar[0].id === index ||
+                  threeFirstChar[1].id === index ||
+                  threeFirstChar[2].id === index
+                ) {
+                  spanArrayCurrentRowNext[index].innerHTML =
+                    rightWords.word.charAt(index);
+                } else {
+                  spanArrayCurrentRowNext[index].innerHTML = "";
+                }
+              }
+            }, 2000);
+          });
+        }
+        /*   dispatch({ type: "VALIDATE_BOOLEAN" }); */
+        changeBooleanCount();
+      }
+    };
+
+    displayChar();
     firstThreeChar();
-  }, [props.wordEntered, props.count]);
+
+    validateChange();
+  }, [wordEntered, countBoo]);
 
   return (
     <div className="wrapper_template">
-      <div
-        className={props.category === 8 ? "template_1 current" : "template_1"}
-      >
+      <div className={category === 8 ? "template_1 current" : "template_1"}>
         <div
           id="0"
           ref={rowRefEight}
@@ -190,28 +330,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
         </div>
       </div>
 
-      <div
-        className={props.category === 9 ? "template_2 current" : "template_2"}
-      >
-        {/*  {templateSpanRow.map((item, i) => (
-          <div
-            id={i.toString()}
-            ref={(el) => (rowsRefNine.current[i] = el)}
-            className="row active_row"
-            data-name="nine_char"
-          >
-            <span id="0" className="char_box"></span>
-            <span id="1" className="char_box"></span>
-            <span id="2" className="char_box"></span>
-            <span id="3" className="char_box"></span>
-            <span id="4" className="char_box"></span>
-            <span id="5" className="char_box"></span>
-            <span id="6" className="char_box"></span>
-            <span id="7" className="char_box"></span>
-            <span id="8" className="char_box"></span>
-          </div>
-        ))} */}
-        {/* ref={(el: HTMLDivElement) => rowsRefNine.current.push(el!)} */}
+      <div className={category === 9 ? "template_2 current" : "template_2"}>
         <div
           id="0"
           ref={rowRefNine1}
@@ -307,9 +426,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
         </div>
       </div>
 
-      <div
-        className={props.category === 10 ? "template_3 current" : "template_3"}
-      >
+      <div className={category === 10 ? "template_3 current" : "template_3"}>
         <div
           id="0"
           ref={rowRefTen}
