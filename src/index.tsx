@@ -24,6 +24,8 @@ const [
   wordEntered,
   count,
   countBoo,
+  level,
+  score,
   rightWords,
   rightWordArray,
   wordPlate,
@@ -34,6 +36,8 @@ const [
   INITIAL_STATE.wordEntered,
   INITIAL_STATE.count,
   INITIAL_STATE.countBoo,
+  INITIAL_STATE.level,
+  INITIAL_STATE.score,
   INITIAL_STATE.rightWords,
   INITIAL_STATE.rightWordArray,
   INITIAL_STATE.wordPlate,
@@ -48,6 +52,8 @@ root.render(
       wordEntered={wordEntered}
       count={count}
       countBoo={countBoo}
+      level={level}
+      score={score}
       rightWords={rightWords}
       rightWordArray={rightWordArray}
       wordPlate={wordPlate}

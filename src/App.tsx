@@ -11,7 +11,16 @@ import { NineCharactersWords } from "./LibraryWords";
 import { INITIAL_STATE, reducer } from "./reducer/WordsReducer";
 import { userGameContext } from "./context/GameContext";
 import { GameProvider } from "./context/GameContext";
-import { COBRA } from "./assets/images/index.js";
+import {
+  COBRA,
+  HIMITSU,
+  HOKUTO,
+  HUNTER,
+  RANMA,
+  HOUSEHUSBAND,
+  UNGO,
+  PARANOIA,
+} from "./assets/images/index.js";
 import DOWN from "./chevron-down-solid.svg";
 import UP from "./chevron-up-solid.svg";
 import "./App.css";
@@ -24,8 +33,12 @@ export const App = () => {
       category,
       count,
       countBoo,
+      level,
+      score,
+      currentImg,
       threeFirstChar,
       wordEntered,
+      winOrLoose,
       rightWords,
       rightWordArray,
       wordPlate,
@@ -34,10 +47,14 @@ export const App = () => {
     handleCategory,
     changeCount,
     changeBooleanCount,
+    updateLevel,
+    updateImage,
     handleFirstChar,
     handleChangeInput,
     handleMatchingChar,
     handleWordTemplate,
+    winningOrLooSing,
+    endGameMessage,
   } = useContext(userGameContext);
 
   const caseRef = useRef<HTMLDivElement>(null);
@@ -48,9 +65,24 @@ export const App = () => {
   const miniRowNine = useRef<HTMLDivElement>(null);
   const miniRowTen = useRef<HTMLDivElement>(null);
   const warningRef = useRef<HTMLParagraphElement>(null);
-  let idTmp: number = 0;
 
+  let idTmp: number = 0;
   let newThreeChar: WordsObject[] = [];
+
+  const imageFitting = [
+    COBRA,
+    HIMITSU,
+    HOUSEHUSBAND,
+    PARANOIA,
+    HOKUTO,
+    RANMA,
+    HUNTER,
+    UNGO,
+    HIMITSU,
+  ];
+
+  let myCurrentPicture: string = imageFitting[1];
+  let pictureIndex: number = -1;
 
   useEffect(() => {
     const miniTemplate = (category): void => {
@@ -120,9 +152,11 @@ export const App = () => {
       }
     };
 
+    currentPicture();
+
     discloseThreeCharacters();
     miniTemplate(category);
-  }, [category]);
+  }, [category, currentImg]);
 
   const showDisplay = (e: React.MouseEvent): void => {
     console.log("target : ", e.target);
@@ -141,12 +175,31 @@ export const App = () => {
     entryWords: document.querySelector(".entry_words"),
   };
 
+  const currentPicture = (): void => {
+    let myCurrentPicture: string = "";
+    let n: number = level;
+    let m: number = 0;
+
+    if (level > 9) {
+      myCurrentPicture = imageFitting[0];
+    }
+
+    if (score === 0 || score % 2 === 1) {
+      myCurrentPicture = imageFitting[n - 1];
+    } else if (score % 2 === 0) {
+      m = score / 15;
+      myCurrentPicture = imageFitting[m];
+    }
+
+    updateImage(myCurrentPicture);
+    console.log("my current picture", myCurrentPicture);
+  };
+
   const handleWordEntered = (e: React.ChangeEvent<HTMLInputElement>): void => {
     let miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
     let miniSpanArray: Element[] = [];
 
     let inputConvertArray: string[] = [];
-    let areaWordMoveRecord: any[] = [];
 
     for (let i = 0; i < e.target.value.length; i++) {
       inputConvertArray[i] = e.target.value.charAt(i);
@@ -189,6 +242,9 @@ export const App = () => {
     let previousInputWord: string[] = wordEntered;
     let currentRightWord: string[] = rightWordArray;
 
+    let areaWordMoveRecord: any[] = [];
+    let newWordTemplate: any[] = [];
+
     if (previousInputWord.length === currentRightWord.length) {
       for (let i = 0; i < currentRightWord.length; i++) {
         if (currentRightWord[i] === previousInputWord[i]) {
@@ -197,7 +253,7 @@ export const App = () => {
             threeFirstChar[1].id === i ||
             threeFirstChar[2].id === i
           ) {
-            wordPlate.push({
+            newWordTemplate.push({
               id: i,
               val: previousInputWord[i],
               status: "given",
@@ -205,7 +261,7 @@ export const App = () => {
               rad: "50%",
             });
           } else {
-            wordPlate.push({
+            newWordTemplate.push({
               id: i,
               val: previousInputWord[i],
               status: "match",
@@ -214,7 +270,7 @@ export const App = () => {
             });
           }
         } else {
-          wordPlate.push({
+          newWordTemplate.push({
             id: i,
             val: previousInputWord[i],
             status: "unmatch",
@@ -224,7 +280,16 @@ export const App = () => {
         }
       }
 
-      arraywordPlateRecord.push(wordPlate);
+      handleMatchingChar(newWordTemplate);
+
+      for (let i = 0; i < newWordTemplate.length; i++) {
+        areaWordMoveRecord[i] = newWordTemplate[i];
+      }
+
+      console.log("framework area", areaWordMoveRecord);
+
+      arraywordPlateRecord.push(areaWordMoveRecord);
+      console.log("area area", arraywordPlateRecord);
 
       if (inputRef.current !== null) {
         inputRef.current.value = "";
@@ -233,18 +298,21 @@ export const App = () => {
       return;
     }
 
-    handleMatchingChar(wordPlate);
-
     changeCount();
     changeBooleanCount();
+    updateLevel();
+
+    currentPicture();
 
     handleWordTemplate(arraywordPlateRecord);
-
-    /* console.log("board word T:", arraywordPlateRecord); */
   };
 
   return (
     <div className="container" onClick={showDisplay}>
+      <div id="end_game_wrapper">
+        <div className="end_game"></div>
+      </div>
+
       <nav className="game_entitled">
         <p className="gen_title">Words & Letters</p>
       </nav>
@@ -263,41 +331,33 @@ export const App = () => {
         </select>
       </div>
       <div className="showcase_game" data-selection="1" ref={caseRef}>
-        {/* <TemplateCharacters
-          category={state.category}
-          threeFirstChar={state.threeFirstChar}
-          wordEntered={state.wordEntered}
-          count={state.count}
-          countBoo={state.countBoo}
-        /> */}
-
         <TemplateCharacters
           category={category}
           threeFirstChar={threeFirstChar}
           wordEntered={wordEntered}
           count={count}
           countBoo={countBoo}
+          inputRef={inputRef}
         />
 
         <div className="template_score">
           <p className="current_step">
             move :
             <span className="count_move" data-switch-img="1">
-              1
+              {level}
             </span>
             / 8
           </p>
 
           <div className="wrap_main_img" data-selection="1" ref={imageRef}>
-            <img src={COBRA} alt="picture missing" className="main_img" />
+            <img src={currentImg} alt="picture missing" className="main_img" />
           </div>
 
           <div className="score_in">
             <p className="score_content">
-              {" "}
               score:
               <span id="score" className="score">
-                20
+                {score}
               </span>
             </p>
           </div>
@@ -382,6 +442,7 @@ export const App = () => {
                 ref={inputRef}
                 onChange={handleWordEntered}
                 placeholder="enter_word"
+                disabled={winOrLoose ? true : false}
               />
 
               <p ref={warningRef} className="warning_characters">
@@ -418,9 +479,15 @@ export const App = () => {
         </div>
         <div className="restart_game">
           <div className="add_game">
-            <button type="button" id="btn_play" className="btn_play_again">
-              PLAY AGAIN
-            </button>
+            {winOrLoose ? (
+              <button type="button" id="btn_play" className="btn_play_again">
+                PLAY AGAIN
+              </button>
+            ) : (
+              <p id="currently_gaming" className="currently_gaming">
+                HOOk GAMING
+              </p>
+            )}
           </div>
 
           <div className="reset_input">

@@ -25,10 +25,15 @@ type StateType = {
   rightWordArray: string[];
   threeFirstChar: any[];
   wordEntered: string[];
+  currentImg: string;
   count: number;
+  level: number;
   countBoo: boolean;
+  score: number;
   wordPlate: any[];
   arraywordPlateRecord: any;
+  endMsgGame: string;
+  winOrLoose: boolean;
 };
 
 const enum REDUCER_ACTION_TYPE {
@@ -39,7 +44,12 @@ const enum REDUCER_ACTION_TYPE {
   MATCH_CHAR,
   VALIDATE_CHANGE,
   VALIDATE_BOOLEAN,
+  INCREMENT_LEVEL,
+  CURRENT_IMG,
+  UPDATE_SCORE,
   RECORD_WORDPLATE,
+  WIN_LOOSE,
+  END_MSG,
 }
 
 type CategoryActionType = {
@@ -71,17 +81,32 @@ type MatchActionType = {
 type ValidateActionType = {
   type:
     | REDUCER_ACTION_TYPE.VALIDATE_CHANGE
-    | REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN;
+    | REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN
+    | REDUCER_ACTION_TYPE.INCREMENT_LEVEL;
 };
 
-/* type RecordWordPlateActionType = {
-  type: REDUCER_ACTION_TYPE.RECORD_WORDPLATE;
-  payload: WordTPlate[];
-}; */
+type ScoreActionType = {
+  type: REDUCER_ACTION_TYPE.UPDATE_SCORE;
+  payload: number;
+};
+
+type CurrentImgActionType = {
+  type: REDUCER_ACTION_TYPE.CURRENT_IMG;
+  payload: string;
+};
 
 type RecordWordPlateActionType = {
   type: REDUCER_ACTION_TYPE.RECORD_WORDPLATE;
   payload: any;
+};
+
+type SendEndingMsgActionType = {
+  type: REDUCER_ACTION_TYPE.END_MSG;
+  payload: string;
+};
+
+type WinLooseActionType = {
+  type: REDUCER_ACTION_TYPE.WIN_LOOSE;
 };
 
 type ActionType =
@@ -91,7 +116,11 @@ type ActionType =
   | InputActionType
   | MatchActionType
   | ValidateActionType
-  | RecordWordPlateActionType;
+  | ScoreActionType
+  | CurrentImgActionType
+  | RecordWordPlateActionType
+  | SendEndingMsgActionType
+  | WinLooseActionType;
 
 // initialize the right random word to play game
 const initRightWord: WordsObject =
@@ -123,8 +152,13 @@ export const INITIAL_STATE = {
   /*  wordPlate: [{ id: 0, val: "c", status: "unmatch", bg: "red", rad: "50%" }], */
   wordPlate: [],
   arraywordPlateRecord: [],
+  currentImg: "",
   count: 0,
   countBoo: false,
+  level: 1,
+  score: 0,
+  endMsgGame: "",
+  winOrLoose: false,
 };
 
 //define reducer (fn) without importing it
@@ -164,10 +198,40 @@ export const reducer = (state: StateType, action: ActionType) => {
         count: state.count + 1,
       };
 
+    case REDUCER_ACTION_TYPE.INCREMENT_LEVEL:
+      return {
+        ...state,
+        level: state.level + 1,
+      };
+
+    case REDUCER_ACTION_TYPE.UPDATE_SCORE:
+      return {
+        ...state,
+        score: state.score + action.payload,
+      };
+
+    case REDUCER_ACTION_TYPE.CURRENT_IMG:
+      return {
+        ...state,
+        currentImg: action.payload,
+      };
+
     case REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN:
       return {
         ...state,
         countBoo: !state.countBoo,
+      };
+
+    case REDUCER_ACTION_TYPE.END_MSG:
+      return {
+        ...state,
+        endMsgGame: action.payload,
+      };
+
+    case REDUCER_ACTION_TYPE.WIN_LOOSE:
+      return {
+        ...state,
+        winOrLoose: !state.winOrLoose,
       };
 
     case REDUCER_ACTION_TYPE.RECORD_WORDPLATE:
@@ -204,6 +268,23 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
       type: REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN,
     });
 
+  const updateLevel = () =>
+    dispatch({
+      type: REDUCER_ACTION_TYPE.INCREMENT_LEVEL,
+    });
+
+  const updateScore = (score: number) =>
+    dispatch({
+      type: REDUCER_ACTION_TYPE.UPDATE_SCORE,
+      payload: score,
+    });
+
+  const updateImage = (picture: string) =>
+    dispatch({
+      type: REDUCER_ACTION_TYPE.CURRENT_IMG,
+      payload: picture,
+    });
+
   const handleFirstChar = (newChar: WordsObject[]) => {
     dispatch({
       type: REDUCER_ACTION_TYPE.FIRST_CHAR,
@@ -225,6 +306,19 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     });
   };
 
+  const endGameMessage = (endMsgGame: string) => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.END_MSG,
+      payload: endMsgGame,
+    });
+  };
+
+  const winningOrLooSing = () => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.WIN_LOOSE,
+    });
+  };
+
   const handleWordTemplate = (wordPlate1: WordTPlate[]) => {
     dispatch({
       type: REDUCER_ACTION_TYPE.RECORD_WORDPLATE,
@@ -237,10 +331,15 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     handleCategory,
     changeCount,
     changeBooleanCount,
+    updateLevel,
+    updateScore,
+    updateImage,
     handleFirstChar,
     handleChangeInput,
     handleMatchingChar,
     handleWordTemplate,
+    winningOrLooSing,
+    endGameMessage,
   };
 };
 
@@ -254,10 +353,15 @@ const initContextState: noteGameContextType = {
   handleCategory: () => {},
   changeCount: () => {},
   changeBooleanCount: () => {},
+  updateLevel: () => {},
+  updateScore: () => {},
+  updateImage: () => {},
   handleFirstChar: () => {},
   handleChangeInput: () => {},
   handleMatchingChar: () => {},
   handleWordTemplate: () => {},
+  winningOrLooSing: () => {},
+  endGameMessage: () => {},
 };
 
 //create Context

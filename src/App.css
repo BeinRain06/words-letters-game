@@ -320,6 +320,14 @@
     height: 25px;
     padding: 0 0.5rem;
   }
+
+  .currently_gaming {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transform: skewX(-10deg);
+  }
 }
 
 @media (min-width: 872px) {
