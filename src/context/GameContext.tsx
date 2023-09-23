@@ -34,6 +34,7 @@ type StateType = {
   arraywordPlateRecord: any;
   endMsgGame: string;
   winOrLoose: boolean;
+  resetRows: boolean;
 };
 
 const enum REDUCER_ACTION_TYPE {
@@ -50,6 +51,7 @@ const enum REDUCER_ACTION_TYPE {
   RECORD_WORDPLATE,
   WIN_LOOSE,
   END_MSG,
+  RESET_ROWS,
 }
 
 type CategoryActionType = {
@@ -82,7 +84,8 @@ type ValidateActionType = {
   type:
     | REDUCER_ACTION_TYPE.VALIDATE_CHANGE
     | REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN
-    | REDUCER_ACTION_TYPE.INCREMENT_LEVEL;
+    | REDUCER_ACTION_TYPE.INCREMENT_LEVEL
+    | REDUCER_ACTION_TYPE.RESET_ROWS;
 };
 
 type ScoreActionType = {
@@ -157,8 +160,9 @@ export const INITIAL_STATE = {
   countBoo: false,
   level: 1,
   score: 0,
-  endMsgGame: "",
+  endMsgGame: "empty",
   winOrLoose: false,
+  resetRows: false,
 };
 
 //define reducer (fn) without importing it
@@ -232,6 +236,12 @@ export const reducer = (state: StateType, action: ActionType) => {
       return {
         ...state,
         winOrLoose: !state.winOrLoose,
+      };
+
+    case REDUCER_ACTION_TYPE.RESET_ROWS:
+      return {
+        ...state,
+        resetRows: !state.resetRows,
       };
 
     case REDUCER_ACTION_TYPE.RECORD_WORDPLATE:
@@ -319,6 +329,12 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     });
   };
 
+  const resetTemplateRows = () => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.RESET_ROWS,
+    });
+  };
+
   const handleWordTemplate = (wordPlate1: WordTPlate[]) => {
     dispatch({
       type: REDUCER_ACTION_TYPE.RECORD_WORDPLATE,
@@ -340,6 +356,7 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     handleWordTemplate,
     winningOrLooSing,
     endGameMessage,
+    resetTemplateRows,
   };
 };
 
@@ -362,6 +379,7 @@ const initContextState: noteGameContextType = {
   handleWordTemplate: () => {},
   winningOrLooSing: () => {},
   endGameMessage: () => {},
+  resetTemplateRows: () => {},
 };
 
 //create Context

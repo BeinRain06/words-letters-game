@@ -37,6 +37,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       count,
       countBoo,
       score,
+      endMsgGame,
       threeFirstChar,
       wordEntered,
       winOrLoose,
@@ -45,6 +46,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       rightWordArray,
       wordPlate,
       arraywordPlateRecord,
+      resetRows,
     },
     handleCategory,
     changeCount,
@@ -57,6 +59,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
     handleWordTemplate,
     winningOrLooSing,
     endGameMessage,
+    resetTemplateRows,
   } = useContext(userGameContext);
 
   const rowRefEight = useRef<HTMLDivElement>(null);
@@ -156,6 +159,55 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       return spanArrayCurrentRow;
     };
 
+    const CheckWinningorScore = (n, inside): void => {
+      if (inside === "win") {
+        let numChar: number = 0;
+
+        /*   wordPlate.map((char, i) => {
+          if (char.status === "match" || char.status === "given") {
+            numChar = numChar + 1;
+          }
+        }); */
+
+        arraywordPlateRecord[n - 1].map((char, i) => {
+          if (char.status === "match" || char.status === "given") {
+            numChar = numChar + 1;
+          }
+        });
+
+        if (numChar !== rightWordArray.length) {
+          if (n - 1 === 7) {
+            endGameMessage("YOU LOOSE !");
+            winningOrLooSing();
+          }
+        } else {
+          endGameMessage("YOU WIN !");
+          winningOrLooSing();
+        }
+      } else {
+        let levelUpScore: number = 0;
+        /*  wordPlate.map((char, i) => {
+          if (char.status === "match") {
+            levelUpScore = levelUpScore + 1;
+          }
+        }); */
+
+        arraywordPlateRecord[n - 1].map((char, i) => {
+          if (char.status === "match") {
+            levelUpScore = levelUpScore + 1;
+          }
+        });
+
+        if (levelUpScore !== 0) {
+          const rateScore: number = 15;
+
+          setTimeout(() => {
+            updateScore(rateScore);
+          }, 1500);
+        }
+      }
+    };
+
     const currentRowMatch = (n, ts1, ts2): void => {
       let spanArrayCurrentRowNext: HTMLElement[] = [];
 
@@ -233,7 +285,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
 
     const validateChange = (): void => {
       let n = count;
-      let levelUpScore = 0;
 
       let spanArrayCurrentRow: HTMLElement[] = [];
 
@@ -246,20 +297,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           spanArrayCurrentRow[i].style.visibility = "hidden";
         }
 
-        wordPlate.map((char, i) => {
-          if (char.status === "match") {
-            levelUpScore = levelUpScore + 1;
-          }
-        });
-
-        if (levelUpScore !== 0) {
-          const rateScore: number = 15;
-
-          setTimeout(() => {
-            updateScore(rateScore);
-          }, 1500);
-        }
-
         console.log("array wordPlate", arraywordPlateRecord);
 
         if (n !== 0) {
@@ -270,7 +307,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
                 spanArrayCurrentRow[index].style.visibility = "visible";
                 spanArrayCurrentRow[index].style.background =
                   "rgb(30, 143, 30)";
-                levelUpScore++;
               } else if (char.status === "given") {
                 spanArrayCurrentRow[index].style.visibility = "visible";
                 spanArrayCurrentRow[index].style.background =
@@ -285,6 +321,12 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           currentRowMatch(n, 5000, 2000);
         }
 
+        setTimeout(() => {
+          CheckWinningorScore(n, "win");
+
+          CheckWinningorScore(n, "score");
+        }, 1500);
+
         changeBooleanCount();
       }
     };
@@ -293,7 +335,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
     firstThreeChar();
 
     validateChange();
-  }, [wordEntered, countBoo]);
+  }, [wordEntered, countBoo, endMsgGame]);
 
   return (
     <div className="wrapper_template">

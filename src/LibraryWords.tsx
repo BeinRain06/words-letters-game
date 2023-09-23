@@ -91,7 +91,7 @@ export const NineCharactersWords: WordsObject[] = [
   },
   {
     id: 18,
-    word: "favorite",
+    word: "favorites",
   },
   {
     id: 19,

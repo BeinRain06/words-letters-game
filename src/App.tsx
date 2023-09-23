@@ -39,9 +39,11 @@ export const App = () => {
       threeFirstChar,
       wordEntered,
       winOrLoose,
+      endMsgGame,
       rightWords,
       rightWordArray,
       wordPlate,
+      resetRows,
       arraywordPlateRecord,
     },
     handleCategory,
@@ -55,6 +57,7 @@ export const App = () => {
     handleWordTemplate,
     winningOrLooSing,
     endGameMessage,
+    resetTemplateRows,
   } = useContext(userGameContext);
 
   const caseRef = useRef<HTMLDivElement>(null);
@@ -156,11 +159,18 @@ export const App = () => {
 
     discloseThreeCharacters();
     miniTemplate(category);
+
+    if (endMsgGame === undefined) {
+      endGameMessage("empty");
+    }
+
+    /*  handleReset(); */
   }, [category, currentImg]);
 
   const showDisplay = (e: React.MouseEvent): void => {
     console.log("target : ", e.target);
     console.log("select select :", imageRef.current);
+    console.log("end message game", endMsgGame);
   };
 
   interface MyHTMLElement {
@@ -307,10 +317,49 @@ export const App = () => {
     handleWordTemplate(arraywordPlateRecord);
   };
 
+  const handleReset = (): void => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 200);
+  };
+
+  const handleExit = (): void => {
+    winningOrLooSing();
+  };
+
   return (
-    <div className="container" onClick={showDisplay}>
-      <div id="end_game_wrapper">
-        <div className="end_game"></div>
+    <div
+      id="container_game"
+      className={winOrLoose ? "container overlap" : "container"}
+      onClick={showDisplay}
+    >
+      <div
+        id="end_game_wrapper"
+        style={{ display: winOrLoose ? "block" : "none" }}
+        className="end_game_wrapper"
+      >
+        <div className={winOrLoose ? "end_game add_msg" : "end_game"}>
+          <p className="special_msg"> {endMsgGame}</p>
+          <div className="wrapper_reset">
+            <button
+              id="rest_game"
+              type="button"
+              className="btn_special rest_game"
+              onClick={handleReset}
+            >
+              RESTART
+            </button>
+
+            <button
+              id="exit_game"
+              type="button"
+              className="btn_special exit_game"
+              onClick={handleExit}
+            >
+              EXIT
+            </button>
+          </div>
+        </div>
       </div>
 
       <nav className="game_entitled">
@@ -442,7 +491,6 @@ export const App = () => {
                 ref={inputRef}
                 onChange={handleWordEntered}
                 placeholder="enter_word"
-                disabled={winOrLoose ? true : false}
               />
 
               <p ref={warningRef} className="warning_characters">
@@ -479,8 +527,13 @@ export const App = () => {
         </div>
         <div className="restart_game">
           <div className="add_game">
-            {winOrLoose ? (
-              <button type="button" id="btn_play" className="btn_play_again">
+            {endMsgGame !== "empty" ? (
+              <button
+                type="button"
+                id="btn_play"
+                className="btn_play_again"
+                onClick={handleReset}
+              >
                 PLAY AGAIN
               </button>
             ) : (
@@ -490,11 +543,18 @@ export const App = () => {
             )}
           </div>
 
-          <div className="reset_input">
-            <button type="button" id="btn_reset" className="btn_reset_game">
-              RESET
-            </button>
-          </div>
+          {endMsgGame === "empty" && (
+            <div className="reset_input">
+              <button
+                type="button"
+                id="btn_reset"
+                className="btn_reset_game"
+                onClick={handleReset}
+              >
+                RESET
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
