@@ -31,15 +31,17 @@ type StateType = {
   countBoo: boolean;
   score: number;
   wordPlate: any[];
-  arraywordPlateRecord: any;
   endMsgGame: string;
   winOrLoose: boolean;
-  resetRows: boolean;
+  resetRows: number;
+  comeReset: boolean;
+  arraywordPlateRecord: any;
 };
 
 const enum REDUCER_ACTION_TYPE {
   CHANGE_CATEGORY,
   CHANGE_CURRENT,
+  CHANGE_CURRENT_ARRAY,
   CHANGE_INPUT,
   FIRST_CHAR,
   MATCH_CHAR,
@@ -52,6 +54,8 @@ const enum REDUCER_ACTION_TYPE {
   WIN_LOOSE,
   END_MSG,
   RESET_ROWS,
+  RESET_COUNT,
+  VAL_RESET_ROWS,
 }
 
 type CategoryActionType = {
@@ -65,6 +69,11 @@ type CurrentWordActionType = {
   payload: WordsObject;
 };
 
+type CurrentRightWordArrayActionType = {
+  type: REDUCER_ACTION_TYPE.CHANGE_CURRENT_ARRAY;
+  payload: string[];
+};
+
 type FirstCharActionType = {
   type: REDUCER_ACTION_TYPE.FIRST_CHAR;
   payload: WordsObject[];
@@ -75,17 +84,32 @@ type InputActionType = {
   payload: string[];
 };
 
+type TrialResetActionType = {
+  type: REDUCER_ACTION_TYPE.VAL_RESET_ROWS;
+};
+
 type MatchActionType = {
   type: REDUCER_ACTION_TYPE.MATCH_CHAR;
   payload: WordTPlate[];
 };
 
 type ValidateActionType = {
-  type:
-    | REDUCER_ACTION_TYPE.VALIDATE_CHANGE
-    | REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN
-    | REDUCER_ACTION_TYPE.INCREMENT_LEVEL
-    | REDUCER_ACTION_TYPE.RESET_ROWS;
+  type: REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN;
+};
+
+type UpdateCountActionType = {
+  type: REDUCER_ACTION_TYPE.VALIDATE_CHANGE;
+  /*  payload: number; */
+};
+
+type SetIndexResetActionType = {
+  type: REDUCER_ACTION_TYPE.RESET_ROWS | REDUCER_ACTION_TYPE.RESET_COUNT;
+  payload: number;
+};
+
+type UpdateLevelActionType = {
+  type: REDUCER_ACTION_TYPE.INCREMENT_LEVEL;
+  payload: number;
 };
 
 type ScoreActionType = {
@@ -115,15 +139,20 @@ type WinLooseActionType = {
 type ActionType =
   | CategoryActionType
   | CurrentWordActionType
+  | CurrentRightWordArrayActionType
   | FirstCharActionType
   | InputActionType
   | MatchActionType
   | ValidateActionType
+  | SetIndexResetActionType
   | ScoreActionType
+  | UpdateCountActionType
+  | UpdateLevelActionType
   | CurrentImgActionType
   | RecordWordPlateActionType
   | SendEndingMsgActionType
-  | WinLooseActionType;
+  | WinLooseActionType
+  | TrialResetActionType;
 
 // initialize the right random word to play game
 const initRightWord: WordsObject =
@@ -162,7 +191,8 @@ export const INITIAL_STATE = {
   score: 0,
   endMsgGame: "empty",
   winOrLoose: false,
-  resetRows: false,
+  resetRows: 0,
+  comeReset: false,
 };
 
 //define reducer (fn) without importing it
@@ -178,6 +208,12 @@ export const reducer = (state: StateType, action: ActionType) => {
       return {
         ...state,
         rightWords: action.payload,
+      };
+
+    case REDUCER_ACTION_TYPE.CHANGE_CURRENT_ARRAY:
+      return {
+        ...state,
+        rightWordArray: action.payload,
       };
     case REDUCER_ACTION_TYPE.FIRST_CHAR:
       return {
@@ -202,10 +238,16 @@ export const reducer = (state: StateType, action: ActionType) => {
         count: state.count + 1,
       };
 
+    case REDUCER_ACTION_TYPE.RESET_COUNT:
+      return {
+        ...state,
+        count: action.payload,
+      };
+
     case REDUCER_ACTION_TYPE.INCREMENT_LEVEL:
       return {
         ...state,
-        level: state.level + 1,
+        level: action.payload,
       };
 
     case REDUCER_ACTION_TYPE.UPDATE_SCORE:
@@ -241,7 +283,13 @@ export const reducer = (state: StateType, action: ActionType) => {
     case REDUCER_ACTION_TYPE.RESET_ROWS:
       return {
         ...state,
-        resetRows: !state.resetRows,
+        resetRows: action.payload,
+      };
+
+    case REDUCER_ACTION_TYPE.VAL_RESET_ROWS:
+      return {
+        ...state,
+        comeReset: !state.comeReset,
       };
 
     case REDUCER_ACTION_TYPE.RECORD_WORDPLATE:
@@ -273,14 +321,21 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
       type: REDUCER_ACTION_TYPE.VALIDATE_CHANGE,
     });
 
+  const handleResetCount = (countIn: number) =>
+    dispatch({
+      type: REDUCER_ACTION_TYPE.RESET_COUNT,
+      payload: countIn,
+    });
+
   const changeBooleanCount = () =>
     dispatch({
       type: REDUCER_ACTION_TYPE.VALIDATE_BOOLEAN,
     });
 
-  const updateLevel = () =>
+  const updateLevel = (numLevel: number) =>
     dispatch({
       type: REDUCER_ACTION_TYPE.INCREMENT_LEVEL,
+      payload: numLevel,
     });
 
   const updateScore = (score: number) =>
@@ -309,6 +364,13 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     });
   };
 
+  const handleChangeRightWordArray = (newRightWordArray: string[]) => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.CHANGE_CURRENT_ARRAY,
+      payload: newRightWordArray,
+    });
+  };
+
   const handleMatchingChar = (wordPlate: WordTPlate[]) => {
     dispatch({
       type: REDUCER_ACTION_TYPE.MATCH_CHAR,
@@ -329,9 +391,16 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     });
   };
 
-  const resetTemplateRows = () => {
+  const resetTemplateRows = (indReset: number) => {
     dispatch({
       type: REDUCER_ACTION_TYPE.RESET_ROWS,
+      payload: indReset,
+    });
+  };
+
+  const handleResetRows = () => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.VAL_RESET_ROWS,
     });
   };
 
@@ -345,15 +414,18 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
   return {
     state,
     handleCategory,
-    changeCount,
     changeBooleanCount,
     updateLevel,
     updateScore,
     updateImage,
+    changeCount,
+    handleResetCount,
     handleFirstChar,
     handleChangeInput,
     handleMatchingChar,
+    handleChangeRightWordArray,
     handleWordTemplate,
+    handleResetRows,
     winningOrLooSing,
     endGameMessage,
     resetTemplateRows,
@@ -369,6 +441,7 @@ const initContextState: noteGameContextType = {
   state: INITIAL_STATE,
   handleCategory: () => {},
   changeCount: () => {},
+  handleResetCount: () => {},
   changeBooleanCount: () => {},
   updateLevel: () => {},
   updateScore: () => {},
@@ -377,9 +450,11 @@ const initContextState: noteGameContextType = {
   handleChangeInput: () => {},
   handleMatchingChar: () => {},
   handleWordTemplate: () => {},
+  handleChangeRightWordArray: () => {},
   winningOrLooSing: () => {},
   endGameMessage: () => {},
   resetTemplateRows: () => {},
+  handleResetRows: () => {},
 };
 
 //create Context

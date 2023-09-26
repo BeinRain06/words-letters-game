@@ -7,7 +7,11 @@ import React, {
 } from "react";
 import TemplateCharacters from "./components/wordsBoard/TemplateCharacters";
 import { WordsObject, ComparisonType, WordTPlate } from "./LibraryWords";
-import { NineCharactersWords } from "./LibraryWords";
+import {
+  NineCharactersWords,
+  EightCharactersWords,
+  TenCharactersWords,
+} from "./LibraryWords";
 import { INITIAL_STATE, reducer } from "./reducer/WordsReducer";
 import { userGameContext } from "./context/GameContext";
 import { GameProvider } from "./context/GameContext";
@@ -36,6 +40,7 @@ export const App = () => {
       level,
       score,
       currentImg,
+      comeReset,
       threeFirstChar,
       wordEntered,
       winOrLoose,
@@ -48,16 +53,20 @@ export const App = () => {
     },
     handleCategory,
     changeCount,
+    handleResetCount,
     changeBooleanCount,
     updateLevel,
+    updateScore,
     updateImage,
     handleFirstChar,
     handleChangeInput,
+    handleChangeRightWordArray,
     handleMatchingChar,
     handleWordTemplate,
     winningOrLooSing,
     endGameMessage,
     resetTemplateRows,
+    handleResetRows,
   } = useContext(userGameContext);
 
   const caseRef = useRef<HTMLDivElement>(null);
@@ -84,8 +93,72 @@ export const App = () => {
     HIMITSU,
   ];
 
-  let myCurrentPicture: string = imageFitting[1];
-  let pictureIndex: number = -1;
+  /* let myCurrentPicture: string = imageFitting[1];
+  let pictureIndex: number = -1; */
+
+  useEffect(() => {
+    const discloseThreeCharacters = (): void => {
+      let arrayThreeFirstChar: WordsObject[] = [];
+
+      if (category === 9) {
+        let baseWords: WordsObject[] = [];
+        baseWords = NineCharactersWords.map((item) => item);
+
+        console.log("right word abc", rightWords);
+
+        for (let i = 0; i < rightWords.word.length; i++) {
+          rightWordArray[i] = rightWords.word.charAt(i);
+        }
+      } else if (category === 8) {
+        let baseWords: WordsObject[] = [];
+        baseWords = EightCharactersWords.map((item) => item);
+
+        for (let i = 0; i < rightWords.word.length; i++) {
+          rightWordArray[i] = rightWords.word.charAt(i);
+        }
+      } else if (category === 10) {
+        let baseWords: WordsObject[] = [];
+        baseWords = TenCharactersWords.map((item) => item);
+
+        for (let i = 0; i < rightWords.word.length; i++) {
+          rightWordArray[i] = rightWords.word.charAt(i);
+        }
+      }
+
+      idTmp = 1;
+      // select first character
+      let a = idTmp;
+      arrayThreeFirstChar.push({
+        id: a,
+        word: rightWordArray[a],
+      });
+
+      idTmp = 4;
+      // select second character
+      let b = idTmp;
+      arrayThreeFirstChar.push({
+        id: b,
+        word: rightWordArray[b],
+      });
+
+      idTmp = 6;
+      // select third character
+      let c = idTmp;
+      arrayThreeFirstChar.push({
+        id: c,
+        word: rightWordArray[c],
+      });
+
+      //sort array three
+      newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
+
+      handleFirstChar(newThreeChar);
+
+      console.log("three first: ", newThreeChar);
+    };
+
+    discloseThreeCharacters();
+  }, []);
 
   useEffect(() => {
     const miniTemplate = (category): void => {
@@ -108,69 +181,78 @@ export const App = () => {
       }
     };
 
-    const discloseThreeCharacters = (): void => {
+    /*  const discloseThreeCharacters = (): void => {
       let arrayThreeFirstChar: WordsObject[] = [];
 
       if (category === 9) {
-        let baseWords: WordsObject[] = NineCharactersWords.map((item) => item);
-
-        idTmp = Math.floor(Math.random() * baseWords.length);
+        let baseWords: WordsObject[] = [];
+        baseWords = NineCharactersWords.map((item) => item);
 
         console.log("right word abc", rightWords);
 
         for (let i = 0; i < rightWords.word.length; i++) {
           rightWordArray[i] = rightWords.word.charAt(i);
         }
+      } else if (category === 8) {
+        let baseWords: WordsObject[] = [];
+        baseWords = EightCharactersWords.map((item) => item);
 
-        idTmp = 1;
-        // select first character
-        let a = idTmp;
-        arrayThreeFirstChar.push({
-          id: a,
-          word: rightWordArray[a],
-        });
+        for (let i = 0; i < rightWords.word.length; i++) {
+          rightWordArray[i] = rightWords.word.charAt(i);
+        }
+      } else if (category === 10) {
+        let baseWords: WordsObject[] = [];
+        baseWords = TenCharactersWords.map((item) => item);
 
-        idTmp = 4;
-        // select second character
-        let b = idTmp;
-        arrayThreeFirstChar.push({
-          id: b,
-          word: rightWordArray[b],
-        });
-
-        idTmp = 6;
-        // select third character
-        let c = idTmp;
-        arrayThreeFirstChar.push({
-          id: c,
-          word: rightWordArray[c],
-        });
-
-        //sort array three
-        newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
-
-        handleFirstChar(newThreeChar);
-
-        console.log("three first: ", newThreeChar);
+        for (let i = 0; i < rightWords.word.length; i++) {
+          rightWordArray[i] = rightWords.word.charAt(i);
+        }
       }
-    };
+
+      idTmp = 1;
+      // select first character
+      let a = idTmp;
+      arrayThreeFirstChar.push({
+        id: a,
+        word: rightWordArray[a],
+      });
+
+      idTmp = 4;
+      // select second character
+      let b = idTmp;
+      arrayThreeFirstChar.push({
+        id: b,
+        word: rightWordArray[b],
+      });
+
+      idTmp = 6;
+      // select third character
+      let c = idTmp;
+      arrayThreeFirstChar.push({
+        id: c,
+        word: rightWordArray[c],
+      });
+
+      //sort array three
+      newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
+
+      handleFirstChar(newThreeChar);
+
+      console.log("three first: ", newThreeChar);
+    }; */
 
     currentPicture();
 
-    discloseThreeCharacters();
+    /* discloseThreeCharacters(); */
     miniTemplate(category);
-
-    if (endMsgGame === undefined) {
-      endGameMessage("empty");
-    }
-
-    /*  handleReset(); */
-  }, [category, currentImg]);
+  }, [category, currentImg, score]);
 
   const showDisplay = (e: React.MouseEvent): void => {
     console.log("target : ", e.target);
     console.log("select select :", imageRef.current);
     console.log("end message game", endMsgGame);
+    console.log(" reset rows rows", resetRows);
+    console.log("end beginnin come RESet", comeReset);
   };
 
   interface MyHTMLElement {
@@ -190,35 +272,109 @@ export const App = () => {
     let n: number = level;
     let m: number = 0;
 
-    if (level > 9) {
+    if (level > 9 || score === 0) {
       myCurrentPicture = imageFitting[0];
     }
 
-    if (score === 0 || score % 2 === 1) {
-      myCurrentPicture = imageFitting[n - 1];
-    } else if (score % 2 === 0) {
+    if (score % 2 === 0) {
       m = score / 15;
       myCurrentPicture = imageFitting[m];
+    } else if (score % 2 === 1) {
+      myCurrentPicture = imageFitting[n - 2];
     }
 
     updateImage(myCurrentPicture);
     console.log("my current picture", myCurrentPicture);
   };
 
-  const handleWordEntered = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    let miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
+  /* const discloseThreeCharacters = (): void => {
+    let arrayThreeFirstChar: WordsObject[] = [];
+
+    if (category === 9) {
+      let baseWords: WordsObject[] = [];
+      baseWords = NineCharactersWords.map((item) => item);
+
+      console.log("right word abc", rightWords);
+
+      for (let i = 0; i < rightWords.word.length; i++) {
+        rightWordArray[i] = rightWords.word.charAt(i);
+      }
+    } else if (category === 8) {
+      let baseWords: WordsObject[] = [];
+      baseWords = EightCharactersWords.map((item) => item);
+
+      for (let i = 0; i < rightWords.word.length; i++) {
+        rightWordArray[i] = rightWords.word.charAt(i);
+      }
+    } else if (category === 10) {
+      let baseWords: WordsObject[] = [];
+      baseWords = TenCharactersWords.map((item) => item);
+
+      for (let i = 0; i < rightWords.word.length; i++) {
+        rightWordArray[i] = rightWords.word.charAt(i);
+      }
+    }
+
+    idTmp = 1;
+    // select first character
+    let a = idTmp;
+    arrayThreeFirstChar.push({
+      id: a,
+      word: rightWordArray[a],
+    });
+
+    idTmp = 4;
+    // select second character
+    let b = idTmp;
+    arrayThreeFirstChar.push({
+      id: b,
+      word: rightWordArray[b],
+    });
+
+    idTmp = 6;
+    // select third character
+    let c = idTmp;
+    arrayThreeFirstChar.push({
+      id: c,
+      word: rightWordArray[c],
+    });
+
+    //sort array three
+    newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
+
+    handleFirstChar(newThreeChar);
+
+    console.log("three first: ", newThreeChar);
+  }; */
+
+  const selectMiniRow = (): Element[] => {
+    let miniRowElt;
     let miniSpanArray: Element[] = [];
 
-    let inputConvertArray: string[] = [];
-
-    for (let i = 0; i < e.target.value.length; i++) {
-      inputConvertArray[i] = e.target.value.charAt(i);
-    }
+    if (category === 9)
+      miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
+    if (category === 8)
+      miniRowElt = miniRowEight.current?.querySelectorAll(".char_box");
+    if (category === 10)
+      miniRowElt = miniRowTen.current?.querySelectorAll(".char_box");
 
     if (miniRowElt !== undefined) {
       for (let i = 0; i < miniRowElt.length; i++) {
         miniSpanArray.push(miniRowElt[i]);
       }
+    }
+
+    return miniSpanArray;
+  };
+
+  const saveAnArrayOfInput = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): string[] => {
+    let inputConvertArray: string[] = [];
+
+    for (let i = 0; i < e.target.value.length; i++) {
+      /* inputConvertArray[i] = e.target.value.charAt(i).toLowerCase(); */
+      inputConvertArray[i] = e.target.value.charAt(i);
     }
 
     if (inputConvertArray.length > category) {
@@ -236,21 +392,70 @@ export const App = () => {
       handleChangeInput(inputConvertArray);
     }
 
+    return inputConvertArray;
+  };
+
+  const handleWordEntered = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    /* let miniRowElt: NodeListOf<Element> | undefined; */
+    /* let miniRowElt;
+
+    if (category === 9)
+      miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
+    if (category === 8)
+      miniRowElt = miniRowEight.current?.querySelectorAll(".char_box");
+    if (category === 10)
+      miniRowElt = miniRowTen.current?.querySelectorAll(".char_box"); */
+
+    let miniSpanArray: Element[] = selectMiniRow();
+
+    /* 
+    if (miniRowElt !== undefined) {
+      for (let i = 0; i < miniRowElt.length; i++) {
+        miniSpanArray.push(miniRowElt[i]);
+      }
+    } */
+
+    let inputConvertArray: string[] = saveAnArrayOfInput(e);
+
+    /*  let inputConvertArray: string[]= [];
+
+     for (let i = 0; i < e.target.value.length; i++) {
+       inputConvertArray[i] = e.target.value.charAt(i).toLowerCase();
+     }
+
+    if (inputConvertArray.length > category) {
+      warningRef.current?.classList.add("standing");
+      setTimeout(() => {
+        warningRef.current?.classList.remove("standing");
+      }, 2200);
+
+      for (let i = 0; i < category; i++) {
+        inputConvertArray[i] = e.target.value.charAt(i);
+      }
+
+      handleChangeInput(inputConvertArray);
+    } else {
+      handleChangeInput(inputConvertArray);
+    } */
+
     //reset mini-template span to empty value
     for (let i = 0; i < miniSpanArray.length; i++) {
       miniSpanArray[i].innerHTML = "";
     }
-
+    // fill mini span array row
     inputConvertArray.map((char, index) => {
       if (miniSpanArray[index] !== undefined) {
         miniSpanArray[index].innerHTML = char;
       }
     });
+
+    console.log("area word template Record in wD", arraywordPlateRecord);
   };
 
   const validateInput = (): void => {
     let previousInputWord: string[] = wordEntered;
     let currentRightWord: string[] = rightWordArray;
+    const levelUp: number = level + 1;
 
     let areaWordMoveRecord: any[] = [];
     let newWordTemplate: any[] = [];
@@ -301,6 +506,11 @@ export const App = () => {
       arraywordPlateRecord.push(areaWordMoveRecord);
       console.log("area area", arraywordPlateRecord);
 
+      console.log("area area 00", arraywordPlateRecord[0]);
+
+      console.log("word entered imc", wordEntered);
+      console.log("right word array imc", rightWordArray);
+
       if (inputRef.current !== null) {
         inputRef.current.value = "";
       }
@@ -310,17 +520,134 @@ export const App = () => {
 
     changeCount();
     changeBooleanCount();
-    updateLevel();
+    updateLevel(levelUp);
+
+    console.log("give me count here", count);
 
     currentPicture();
 
     handleWordTemplate(arraywordPlateRecord);
   };
 
+  const rebuildFirstCharAfterReset = (): string[] => {
+    let initRightWord: WordsObject;
+    let rightWordArray: string[] = [];
+
+    if (category === 9) {
+      initRightWord =
+        NineCharactersWords[
+          Math.floor(Math.random() * NineCharactersWords.length)
+        ];
+
+      /* let rightWordArray: string[] = []; */
+
+      for (let i = 0; i < initRightWord.word.length; i++) {
+        rightWordArray[i] = initRightWord.word.charAt(i);
+      }
+
+      handleFirstChar([
+        { id: 1, word: rightWordArray[1] },
+        { id: 4, word: rightWordArray[4] },
+        { id: 6, word: rightWordArray[6] },
+      ]);
+
+      handleChangeRightWordArray(rightWordArray);
+    }
+
+    if (category === 8) {
+      initRightWord =
+        EightCharactersWords[
+          Math.floor(Math.random() * EightCharactersWords.length)
+        ];
+
+      /* let rightWordArray: string[] = []; */
+
+      for (let i = 0; i < initRightWord.word.length; i++) {
+        rightWordArray[i] = initRightWord.word.charAt(i);
+      }
+
+      handleFirstChar([
+        { id: 1, word: rightWordArray[1] },
+        { id: 4, word: rightWordArray[4] },
+        { id: 6, word: rightWordArray[6] },
+      ]);
+
+      handleChangeRightWordArray(rightWordArray);
+    }
+
+    if (category === 10) {
+      initRightWord =
+        TenCharactersWords[
+          Math.floor(Math.random() * TenCharactersWords.length)
+        ];
+
+      /* let rightWordArray: string[] = []; */
+
+      for (let i = 0; i < initRightWord.word.length; i++) {
+        rightWordArray[i] = initRightWord.word.charAt(i);
+      }
+
+      handleFirstChar([
+        { id: 1, word: rightWordArray[1] },
+        { id: 4, word: rightWordArray[4] },
+        { id: 6, word: rightWordArray[6] },
+      ]);
+
+      handleChangeRightWordArray(rightWordArray);
+    }
+
+    return rightWordArray;
+  };
+
   const handleReset = (): void => {
-    setTimeout(() => {
+    const levelSet: number = 1;
+    const indReset: number = 2;
+    const rateScore: number = -score;
+    const countIn: number = 0;
+    const newTemplate: any = new Array();
+    const newWordEntered: string[] = new Array();
+    let miniSpanArray: Element[] = selectMiniRow();
+
+    /* setTimeout(() => {
       window.location.reload();
-    }, 200);
+
+      if (endMsgGame === undefined) {
+        endGameMessage("empty");
+      }
+    }, 200); */
+
+    for (let i = 0; i < miniSpanArray.length; i++) {
+      miniSpanArray[i].innerHTML = "";
+    }
+
+    if (winOrLoose) {
+      winningOrLooSing();
+    }
+
+    if (endMsgGame === "YOU LOOSE !" || "YOU WIN !") {
+      endGameMessage("resetting");
+    }
+
+    updateScore(rateScore);
+    updateLevel(levelSet);
+
+    handleResetCount(countIn);
+
+    resetTemplateRows(indReset);
+
+    handleResetRows();
+
+    handleChangeInput(newWordEntered);
+
+    handleWordTemplate(newTemplate);
+
+    let ourNewRightWordsArray = rebuildFirstCharAfterReset();
+
+    handleChangeRightWordArray(ourNewRightWordsArray);
+
+    console.log("reset orw new Right Word array app.tsx", rightWordArray);
+
+    console.log("reset orw rows comeReset", comeReset);
   };
 
   const handleExit = (): void => {
@@ -387,6 +714,9 @@ export const App = () => {
           count={count}
           countBoo={countBoo}
           inputRef={inputRef}
+          /* threeNewFnChar={() => discloseThreeCharacters()} */
+          /*  triggerEmptySpans={() => handleReset()} */
+          resetRows={resetRows}
         />
 
         <div className="template_score">
@@ -527,7 +857,7 @@ export const App = () => {
         </div>
         <div className="restart_game">
           <div className="add_game">
-            {endMsgGame !== "empty" ? (
+            {winOrLoose ? (
               <button
                 type="button"
                 id="btn_play"
@@ -543,7 +873,7 @@ export const App = () => {
             )}
           </div>
 
-          {endMsgGame === "empty" && (
+          {!winOrLoose && (
             <div className="reset_input">
               <button
                 type="button"
