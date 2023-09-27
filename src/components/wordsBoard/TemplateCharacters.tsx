@@ -57,6 +57,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       wordPlate,
       arraywordPlateRecord,
       resetRows,
+      paletteColors,
     },
     handleCategory,
     changeCount,
@@ -354,70 +355,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       return numbExit;
     }; */
 
-    const rebuildFirstCharAfterReset = (): string[] => {
-      let initRightWord: WordsObject;
-      let rightWordArray: string[] = [];
-
-      if (category === 9) {
-        initRightWord =
-          NineCharactersWords[
-            Math.floor(Math.random() * NineCharactersWords.length)
-          ];
-
-        /* let rightWordArray: string[] = []; */
-
-        for (let i = 0; i < initRightWord.word.length; i++) {
-          rightWordArray[i] = initRightWord.word.charAt(i);
-        }
-
-        handleFirstChar([
-          { id: 1, word: rightWordArray[1] },
-          { id: 4, word: rightWordArray[4] },
-          { id: 6, word: rightWordArray[6] },
-        ]);
-      }
-
-      if (category === 8) {
-        initRightWord =
-          EightCharactersWords[
-            Math.floor(Math.random() * EightCharactersWords.length)
-          ];
-
-        /* let rightWordArray: string[] = []; */
-
-        for (let i = 0; i < initRightWord.word.length; i++) {
-          rightWordArray[i] = initRightWord.word.charAt(i);
-        }
-
-        handleFirstChar([
-          { id: 1, word: rightWordArray[1] },
-          { id: 4, word: rightWordArray[4] },
-          { id: 6, word: rightWordArray[6] },
-        ]);
-      }
-
-      if (category === 10) {
-        initRightWord =
-          TenCharactersWords[
-            Math.floor(Math.random() * TenCharactersWords.length)
-          ];
-
-        /* let rightWordArray: string[] = []; */
-
-        for (let i = 0; i < initRightWord.word.length; i++) {
-          rightWordArray[i] = initRightWord.word.charAt(i);
-        }
-
-        handleFirstChar([
-          { id: 1, word: rightWordArray[1] },
-          { id: 4, word: rightWordArray[4] },
-          { id: 6, word: rightWordArray[6] },
-        ]);
-      }
-
-      return rightWordArray;
-    };
-
     const resetRowsFilledEmpty = (): void => {
       let n: number = count;
       let containerSpanRows: any[] = [];
@@ -428,6 +365,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       if (comeReset) {
         console.log("after if come RESet", comeReset);
         let spanArrayCurrentRow: HTMLElement[] = [];
+        const indColor = Math.floor(Math.random() * 4);
 
         for (let j = 7; j >= 0; j--) {
           spanArrayCurrentRow = createArraySpanRow(j);
@@ -472,7 +410,8 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
             current[i].innerHTML = "";
             current[i].innerText = "";
             current[i].textContent = "";
-            current[i].style.background = "black";
+            /* current[i].style.background = "black"; */
+            current[i].style.background = paletteColors[indColor];
           }
         }
 

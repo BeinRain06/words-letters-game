@@ -1,5 +1,5 @@
 import React, { ReactElement, createContext, useReducer } from "react";
-import { NineCharactersWords } from "../LibraryWords";
+import { NineCharactersWords, TenCharactersWords } from "../LibraryWords";
 
 export interface WordsObject {
   id: number;
@@ -36,6 +36,7 @@ type StateType = {
   resetRows: number;
   comeReset: boolean;
   arraywordPlateRecord: any;
+  paletteColors: string[];
 };
 
 const enum REDUCER_ACTION_TYPE {
@@ -193,6 +194,7 @@ export const INITIAL_STATE = {
   winOrLoose: false,
   resetRows: 0,
   comeReset: false,
+  paletteColors: ["blue", "black", "gray", "#334233"],
 };
 
 //define reducer (fn) without importing it

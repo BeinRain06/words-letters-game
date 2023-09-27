@@ -29,6 +29,12 @@ const [
   rightWords,
   rightWordArray,
   wordPlate,
+  paletteColors,
+  endMsgGame,
+  currentImg,
+  winOrLoose,
+  comeReset,
+  resetRows,
   arraywordPlateRecord,
 ] = [
   INITIAL_STATE.category,
@@ -41,6 +47,12 @@ const [
   INITIAL_STATE.rightWords,
   INITIAL_STATE.rightWordArray,
   INITIAL_STATE.wordPlate,
+  INITIAL_STATE.paletteColors,
+  INITIAL_STATE.endMsgGame,
+  INITIAL_STATE.currentImg,
+  INITIAL_STATE.winOrLoose,
+  INITIAL_STATE.comeReset,
+  INITIAL_STATE.resetRows,
   INITIAL_STATE.arraywordPlateRecord,
 ];
 
@@ -57,6 +69,12 @@ root.render(
       rightWords={rightWords}
       rightWordArray={rightWordArray}
       wordPlate={wordPlate}
+      paletteColors={paletteColors}
+      endMsgGame={endMsgGame}
+      currentImg={currentImg}
+      winOrLoose={winOrLoose}
+      comeReset={comeReset}
+      resetRows={resetRows}
       arraywordPlateRecord={arraywordPlateRecord}
     >
       <App />

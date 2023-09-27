@@ -181,69 +181,8 @@ export const App = () => {
       }
     };
 
-    /*  const discloseThreeCharacters = (): void => {
-      let arrayThreeFirstChar: WordsObject[] = [];
-
-      if (category === 9) {
-        let baseWords: WordsObject[] = [];
-        baseWords = NineCharactersWords.map((item) => item);
-
-        console.log("right word abc", rightWords);
-
-        for (let i = 0; i < rightWords.word.length; i++) {
-          rightWordArray[i] = rightWords.word.charAt(i);
-        }
-      } else if (category === 8) {
-        let baseWords: WordsObject[] = [];
-        baseWords = EightCharactersWords.map((item) => item);
-
-        for (let i = 0; i < rightWords.word.length; i++) {
-          rightWordArray[i] = rightWords.word.charAt(i);
-        }
-      } else if (category === 10) {
-        let baseWords: WordsObject[] = [];
-        baseWords = TenCharactersWords.map((item) => item);
-
-        for (let i = 0; i < rightWords.word.length; i++) {
-          rightWordArray[i] = rightWords.word.charAt(i);
-        }
-      }
-
-      idTmp = 1;
-      // select first character
-      let a = idTmp;
-      arrayThreeFirstChar.push({
-        id: a,
-        word: rightWordArray[a],
-      });
-
-      idTmp = 4;
-      // select second character
-      let b = idTmp;
-      arrayThreeFirstChar.push({
-        id: b,
-        word: rightWordArray[b],
-      });
-
-      idTmp = 6;
-      // select third character
-      let c = idTmp;
-      arrayThreeFirstChar.push({
-        id: c,
-        word: rightWordArray[c],
-      });
-
-      //sort array three
-      newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
-
-      handleFirstChar(newThreeChar);
-
-      console.log("three first: ", newThreeChar);
-    }; */
-
     currentPicture();
 
-    /* discloseThreeCharacters(); */
     miniTemplate(category);
   }, [category, currentImg, score]);
 
@@ -286,66 +225,6 @@ export const App = () => {
     updateImage(myCurrentPicture);
     console.log("my current picture", myCurrentPicture);
   };
-
-  /* const discloseThreeCharacters = (): void => {
-    let arrayThreeFirstChar: WordsObject[] = [];
-
-    if (category === 9) {
-      let baseWords: WordsObject[] = [];
-      baseWords = NineCharactersWords.map((item) => item);
-
-      console.log("right word abc", rightWords);
-
-      for (let i = 0; i < rightWords.word.length; i++) {
-        rightWordArray[i] = rightWords.word.charAt(i);
-      }
-    } else if (category === 8) {
-      let baseWords: WordsObject[] = [];
-      baseWords = EightCharactersWords.map((item) => item);
-
-      for (let i = 0; i < rightWords.word.length; i++) {
-        rightWordArray[i] = rightWords.word.charAt(i);
-      }
-    } else if (category === 10) {
-      let baseWords: WordsObject[] = [];
-      baseWords = TenCharactersWords.map((item) => item);
-
-      for (let i = 0; i < rightWords.word.length; i++) {
-        rightWordArray[i] = rightWords.word.charAt(i);
-      }
-    }
-
-    idTmp = 1;
-    // select first character
-    let a = idTmp;
-    arrayThreeFirstChar.push({
-      id: a,
-      word: rightWordArray[a],
-    });
-
-    idTmp = 4;
-    // select second character
-    let b = idTmp;
-    arrayThreeFirstChar.push({
-      id: b,
-      word: rightWordArray[b],
-    });
-
-    idTmp = 6;
-    // select third character
-    let c = idTmp;
-    arrayThreeFirstChar.push({
-      id: c,
-      word: rightWordArray[c],
-    });
-
-    //sort array three
-    newThreeChar = arrayThreeFirstChar.sort((a, b) => a.id - b.id);
-
-    handleFirstChar(newThreeChar);
-
-    console.log("three first: ", newThreeChar);
-  }; */
 
   const selectMiniRow = (): Element[] => {
     let miniRowElt;
@@ -396,47 +275,9 @@ export const App = () => {
   };
 
   const handleWordEntered = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    /* let miniRowElt: NodeListOf<Element> | undefined; */
-    /* let miniRowElt;
-
-    if (category === 9)
-      miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
-    if (category === 8)
-      miniRowElt = miniRowEight.current?.querySelectorAll(".char_box");
-    if (category === 10)
-      miniRowElt = miniRowTen.current?.querySelectorAll(".char_box"); */
-
     let miniSpanArray: Element[] = selectMiniRow();
 
-    /* 
-    if (miniRowElt !== undefined) {
-      for (let i = 0; i < miniRowElt.length; i++) {
-        miniSpanArray.push(miniRowElt[i]);
-      }
-    } */
-
     let inputConvertArray: string[] = saveAnArrayOfInput(e);
-
-    /*  let inputConvertArray: string[]= [];
-
-     for (let i = 0; i < e.target.value.length; i++) {
-       inputConvertArray[i] = e.target.value.charAt(i).toLowerCase();
-     }
-
-    if (inputConvertArray.length > category) {
-      warningRef.current?.classList.add("standing");
-      setTimeout(() => {
-        warningRef.current?.classList.remove("standing");
-      }, 2200);
-
-      for (let i = 0; i < category; i++) {
-        inputConvertArray[i] = e.target.value.charAt(i);
-      }
-
-      handleChangeInput(inputConvertArray);
-    } else {
-      handleChangeInput(inputConvertArray);
-    } */
 
     //reset mini-template span to empty value
     for (let i = 0; i < miniSpanArray.length; i++) {
@@ -701,9 +542,9 @@ export const App = () => {
           defaultValue="9"
           onChange={handleCategory}
         >
-          <option value="8">08 characters</option>
+          {/* <option value="8">08 characters</option> */}
           <option value="9">09 characters</option>
-          <option value="10">10 characters</option>
+          {/*  <option value="10">10 characters</option> */}
         </select>
       </div>
       <div className="showcase_game" data-selection="1" ref={caseRef}>
@@ -714,8 +555,6 @@ export const App = () => {
           count={count}
           countBoo={countBoo}
           inputRef={inputRef}
-          /* threeNewFnChar={() => discloseThreeCharacters()} */
-          /*  triggerEmptySpans={() => handleReset()} */
           resetRows={resetRows}
         />
 
