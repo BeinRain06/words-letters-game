@@ -1,20 +1,14 @@
-import React, {
-  useState,
-  useReducer,
-  useRef,
-  useEffect,
-  useContext,
-} from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import TemplateCharacters from "./components/wordsBoard/TemplateCharacters";
-import { WordsObject, ComparisonType, WordTPlate } from "./LibraryWords";
+import { WordsObject } from "./LibraryWords";
 import {
   NineCharactersWords,
   EightCharactersWords,
   TenCharactersWords,
 } from "./LibraryWords";
-import { INITIAL_STATE, reducer } from "./reducer/WordsReducer";
+
 import { userGameContext } from "./context/GameContext";
-import { GameProvider } from "./context/GameContext";
+
 import {
   COBRA,
   HIMITSU,
@@ -92,9 +86,6 @@ export const App = () => {
     UNGO,
     HIMITSU,
   ];
-
-  /* let myCurrentPicture: string = imageFitting[1];
-  let pictureIndex: number = -1; */
 
   useEffect(() => {
     const discloseThreeCharacters = (): void => {
@@ -380,8 +371,6 @@ export const App = () => {
           Math.floor(Math.random() * NineCharactersWords.length)
         ];
 
-      /* let rightWordArray: string[] = []; */
-
       for (let i = 0; i < initRightWord.word.length; i++) {
         rightWordArray[i] = initRightWord.word.charAt(i);
       }
@@ -401,8 +390,6 @@ export const App = () => {
           Math.floor(Math.random() * EightCharactersWords.length)
         ];
 
-      /* let rightWordArray: string[] = []; */
-
       for (let i = 0; i < initRightWord.word.length; i++) {
         rightWordArray[i] = initRightWord.word.charAt(i);
       }
@@ -421,8 +408,6 @@ export const App = () => {
         TenCharactersWords[
           Math.floor(Math.random() * TenCharactersWords.length)
         ];
-
-      /* let rightWordArray: string[] = []; */
 
       for (let i = 0; i < initRightWord.word.length; i++) {
         rightWordArray[i] = initRightWord.word.charAt(i);
@@ -448,14 +433,6 @@ export const App = () => {
     const newTemplate: any = new Array();
     const newWordEntered: string[] = new Array();
     let miniSpanArray: Element[] = selectMiniRow();
-
-    /* setTimeout(() => {
-      window.location.reload();
-
-      if (endMsgGame === undefined) {
-        endGameMessage("empty");
-      }
-    }, 200); */
 
     for (let i = 0; i < miniSpanArray.length; i++) {
       miniSpanArray[i].innerHTML = "";
@@ -486,9 +463,7 @@ export const App = () => {
 
     handleChangeRightWordArray(ourNewRightWordsArray);
 
-    console.log("reset orw new Right Word array app.tsx", rightWordArray);
-
-    console.log("reset orw rows comeReset", comeReset);
+    console.log("Right Word array app.tsx", rightWordArray);
   };
 
   const handleExit = (): void => {

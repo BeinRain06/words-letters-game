@@ -1,24 +1,8 @@
 import React, { useEffect, useReducer, useRef, useContext } from "react";
-import {
-  COBRA,
-  HIMITSU,
-  HOKUTO,
-  HUNTER,
-  PARANOIA,
-  RANMA,
-  HOUSEHUSBAND,
-  UNGO,
-} from "../../assets/images";
-import {
-  NineCharactersWords,
-  EightCharactersWords,
-  TenCharactersWords,
-} from "../../LibraryWords";
-import { INITIAL_STATE, reducer } from "../../reducer/WordsReducer";
+
 import { userGameContext } from "../../context/GameContext";
 
 import "./TemplateCharacters.css";
-import { WordsObject } from "../../LibraryWords";
 
 export interface templateProps {
   category: number;
@@ -28,16 +12,11 @@ export interface templateProps {
   countBoo: boolean;
   resetRows: number;
   inputRef: React.RefObject<HTMLInputElement>;
-  /* threeNewFnChar: () => void; */
-
-  /* triggerEmptySpans: () => string; */
 }
 
 {
   /* ref={(el: HTMLDivElement) => rowsRefNine.current.push(el!)} */
 }
-
-/* const TemplateCharacters: React.FC<templateProps> = (props) => {...} */
 
 const TemplateCharacters: React.FC<templateProps> = (props) => {
   const {
@@ -50,29 +29,18 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       endMsgGame,
       threeFirstChar,
       wordEntered,
-      winOrLoose,
-      rightWords,
-      level,
       rightWordArray,
-      wordPlate,
       arraywordPlateRecord,
       resetRows,
       paletteColors,
     },
     handleCategory,
-    changeCount,
     changeBooleanCount,
     updateScore,
-    updateImage,
-    handleFirstChar,
-    handleChangeInput,
-    handleMatchingChar,
-    handleWordTemplate,
     winningOrLooSing,
     endGameMessage,
     resetTemplateRows,
     handleResetRows,
-    handleChangeRightWordArray,
   } = useContext(userGameContext);
 
   /*  const rowsRefEight = useRef<HTMLDivElement>(null); */
@@ -165,16 +133,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
               countChar++;
             }
           });
-
-          /* if (countChar === rightWordArray.length) {
-            endGameMessage("You WIN");
-            winningOrLooSing();
-          } else if (n === 8) {
-            endGameMessage("You LOOSE");
-            winningOrLooSing();
-          }
-
-          console.log("yeah it is indefined"); */
         }
         currentRow =
           rowsRefNiNe[n].current?.querySelectorAll<HTMLElement>(".char_box");
@@ -185,16 +143,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
               countChar++;
             }
           });
-
-          /*  if (countChar === rightWordArray.length) {
-            endGameMessage("You WIN");
-            winningOrLooSing();
-          } else if (n === 8) {
-            endGameMessage("You LOOSE");
-            winningOrLooSing();
-          }
-
-          console.log("yeah it is indefined"); */
         }
 
         currentRow =
@@ -206,16 +154,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
               countChar++;
             }
           });
-
-          /*  if (countChar === rightWordArray.length) {
-            endGameMessage("You WIN");
-            winningOrLooSing();
-          } else if (n === 8) {
-            endGameMessage("You LOOSE");
-            winningOrLooSing();
-          }
-
-          console.log("yeah it is indefined"); */
         }
         currentRow =
           rowsRefTeN[n].current?.querySelectorAll<HTMLElement>(".char_box");
@@ -279,14 +217,11 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
             endGameMessage(endLoose);
             resetTemplateRows(indReset);
             winningOrLooSing();
-            console.log("reset Rows Index loose", resetRows);
           }
         } else {
           endGameMessage(endWin);
-          console.log("end end end ", endMsgGame);
           resetTemplateRows(indReset);
           winningOrLooSing();
-          console.log("reset Rows Index win", resetRows);
         }
       } else {
         let levelUpScore: number = 0;
@@ -348,22 +283,11 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
       });
     };
 
-    /*  const pushCountZero = (): number => {
-      const tmpCount: number = -count;
-      const numbExit: number = 0;
-      changeCount(tmpCount);
-      return numbExit;
-    }; */
-
     const resetRowsFilledEmpty = (): void => {
       let n: number = count;
       let containerSpanRows: any[] = [];
 
-      console.log("reset Rows Index io", props.resetRows);
-      console.log("end msgg msg", endMsgGame);
-
       if (comeReset) {
-        console.log("after if come RESet", comeReset);
         let spanArrayCurrentRow: HTMLElement[] = [];
         const indColor = Math.floor(Math.random() * 4);
 
@@ -372,37 +296,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           containerSpanRows.push(spanArrayCurrentRow);
         }
 
-        /* if (category === 9) {
-          let itemArray: any[] = [];
-          let resource: HTMLElement[] = [];
-
-          for (let j = n; j >= 0; j--) {
-            resource =
-              rowsRefNiNe[j].current?.querySelectorAll<HTMLElement>(
-                ".char_box"
-              );
-            itemArray.push(resource);
-          }
-
-          for (let k = 0; k < itemArray.length; k++) {
-            let current = itemArray[k];
-            for (let i = 0; i < current.length; i++) {
-              current[i].innerHTML = "";
-              current[i].style.background = "black";
-            }
-          }
-        } */
-
         console.log("Container span rows", containerSpanRows);
-
-        /*  for (let j = 0; j < arraywordPlateRecord.length; j++) {
-          arraywordPlateRecord[j] = [];
-        }
-
-          if (arraywordPlateRecord[0] === null) {
-          let modifArray = arraywordPlateRecord.splice(0, 1);
-          handleWordTemplate(modifArray);
-        } */
 
         for (let j = 0; j < containerSpanRows.length; j++) {
           let current = containerSpanRows[j];
@@ -410,39 +304,9 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
             current[i].innerHTML = "";
             current[i].innerText = "";
             current[i].textContent = "";
-            /* current[i].style.background = "black"; */
             current[i].style.background = paletteColors[indColor];
           }
         }
-
-        /* let countZero = pushCountZero();
-        console.log("new n n n", countZero); */
-
-        /* spanArrayCurrentRow = createArraySpanRow(countZero); */
-
-        console.log(
-          "score score array Word Template Record",
-          arraywordPlateRecord
-        );
-        console.log("level level new Count", count);
-        console.log("reset orw new word entered", wordEntered);
-
-        /* spanArrayCurrentRow = createArraySpanRow(n); */
-
-        // reinitialize the right random word to play game
-
-        /* let ourNewRightWordsArray = rebuildFirstCharAfterReset();
-
-        handleChangeRightWordArray(ourNewRightWordsArray);
-
-        console.log("reset orw new Right Word array", ourNewRightWordsArray); */
-
-        console.log("props three char New", threeFirstChar);
-        console.log("right word Array New", rightWordArray);
-
-        /* spanArrayCurrentRow[1].innerHTML = threeFirstChar[0].word;
-        spanArrayCurrentRow[4].innerHTML = threeFirstChar[1].word;
-        spanArrayCurrentRow[6].innerHTML = threeFirstChar[2].word; */
 
         firstThreeChar();
 
@@ -459,14 +323,11 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
 
       spanArrayCurrentRow = validateSpanArrayRow(n);
 
-      /* countBoo && category === 9; */
       if (
         (countBoo && category === 9) ||
         (countBoo && category === 10) ||
         (countBoo && category === 8)
       ) {
-        console.log("props count", props.count);
-
         for (let i = 0; i < spanArrayCurrentRow.length; i++) {
           spanArrayCurrentRow[i].style.visibility = "hidden";
         }
@@ -501,9 +362,6 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           CheckWinningorScore(n, "score");
         }, 1500);
 
-        console.log("we came here win", endMsgGame);
-        console.log("we came here score", score);
-
         changeBooleanCount();
       }
     };
@@ -518,7 +376,7 @@ const TemplateCharacters: React.FC<templateProps> = (props) => {
           for (let i = 0; i < spanArrayCurrentRow.length; i++) {
             spanArrayCurrentRow[i].innerHTML = "";
           }
-          console.log("props three char", threeFirstChar);
+          console.log("three char", threeFirstChar);
 
           spanArrayCurrentRow[1].innerHTML = threeFirstChar[0].word;
 

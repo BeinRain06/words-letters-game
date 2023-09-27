@@ -100,7 +100,6 @@ type ValidateActionType = {
 
 type UpdateCountActionType = {
   type: REDUCER_ACTION_TYPE.VALIDATE_CHANGE;
-  /*  payload: number; */
 };
 
 type SetIndexResetActionType = {
