@@ -41,6 +41,8 @@ export const App = () => {
       endMsgGame,
       rightWords,
       rightWordArray,
+      switchRightWord,
+      switchRightWordArr,
       wordPlate,
       resetRows,
       arraywordPlateRecord,
@@ -54,6 +56,7 @@ export const App = () => {
     updateImage,
     handleFirstChar,
     handleChangeInput,
+    handleChangeRightWord,
     handleChangeRightWordArray,
     handleMatchingChar,
     handleWordTemplate,
@@ -88,32 +91,56 @@ export const App = () => {
   ];
 
   useEffect(() => {
+    const transformWordArray = (initRightWord): string[] => {
+      let rightWordArray: string[] = [];
+
+      for (let i = 0; i < initRightWord.word.length; i++) {
+        rightWordArray[i] = initRightWord.word.charAt(i);
+      }
+
+      return rightWordArray;
+    };
+
     const discloseThreeCharacters = (): void => {
       let arrayThreeFirstChar: WordsObject[] = [];
+      let newRightWordArray: string[] = [];
 
       if (category === 9) {
         let baseWords: WordsObject[] = [];
         baseWords = NineCharactersWords.map((item) => item);
 
+        const newRightWord: WordsObject = switchRightWord[1];
+
+        handleChangeRightWord(newRightWord);
+
+        newRightWordArray = transformWordArray(newRightWord);
+
+        handleChangeRightWordArray(newRightWordArray);
+
         console.log("right word abc", rightWords);
 
-        for (let i = 0; i < rightWords.word.length; i++) {
-          rightWordArray[i] = rightWords.word.charAt(i);
-        }
+        console.log("new right word abc", newRightWord);
       } else if (category === 8) {
         let baseWords: WordsObject[] = [];
         baseWords = EightCharactersWords.map((item) => item);
 
-        for (let i = 0; i < rightWords.word.length; i++) {
-          rightWordArray[i] = rightWords.word.charAt(i);
-        }
+        const newRightWord: WordsObject = switchRightWord[0];
+
+        handleChangeRightWord(newRightWord);
+
+        newRightWordArray = transformWordArray(newRightWord);
+
+        handleChangeRightWordArray(newRightWordArray);
       } else if (category === 10) {
         let baseWords: WordsObject[] = [];
         baseWords = TenCharactersWords.map((item) => item);
 
-        for (let i = 0; i < rightWords.word.length; i++) {
-          rightWordArray[i] = rightWords.word.charAt(i);
-        }
+        const newRightWord: WordsObject = switchRightWord[2];
+        handleChangeRightWord(newRightWord);
+
+        newRightWordArray = transformWordArray(newRightWord);
+
+        handleChangeRightWordArray(newRightWordArray);
       }
 
       idTmp = 1;
@@ -121,7 +148,7 @@ export const App = () => {
       let a = idTmp;
       arrayThreeFirstChar.push({
         id: a,
-        word: rightWordArray[a],
+        word: newRightWordArray[a],
       });
 
       idTmp = 4;
@@ -129,7 +156,7 @@ export const App = () => {
       let b = idTmp;
       arrayThreeFirstChar.push({
         id: b,
-        word: rightWordArray[b],
+        word: newRightWordArray[b],
       });
 
       idTmp = 6;
@@ -137,7 +164,7 @@ export const App = () => {
       let c = idTmp;
       arrayThreeFirstChar.push({
         id: c,
-        word: rightWordArray[c],
+        word: newRightWordArray[c],
       });
 
       //sort array three
@@ -149,7 +176,8 @@ export const App = () => {
     };
 
     discloseThreeCharacters();
-  }, []);
+    handleReset();
+  }, [category]);
 
   useEffect(() => {
     const miniTemplate = (category): void => {
@@ -243,8 +271,8 @@ export const App = () => {
     let inputConvertArray: string[] = [];
 
     for (let i = 0; i < e.target.value.length; i++) {
-      /* inputConvertArray[i] = e.target.value.charAt(i).toLowerCase(); */
-      inputConvertArray[i] = e.target.value.charAt(i);
+      inputConvertArray[i] = e.target.value.charAt(i).toLowerCase();
+      /*  inputConvertArray[i] = e.target.value.charAt(i); */
     }
 
     if (inputConvertArray.length > category) {
@@ -517,9 +545,9 @@ export const App = () => {
           defaultValue="9"
           onChange={handleCategory}
         >
-          {/* <option value="8">08 characters</option> */}
+          <option value="8">08 characters</option>
           <option value="9">09 characters</option>
-          {/*  <option value="10">10 characters</option> */}
+          <option value="10">10 characters</option>
         </select>
       </div>
       <div className="showcase_game" data-selection="1" ref={caseRef}>

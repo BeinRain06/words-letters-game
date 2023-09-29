@@ -1,5 +1,9 @@
 import React, { ReactElement, createContext, useReducer } from "react";
-import { NineCharactersWords, TenCharactersWords } from "../LibraryWords";
+import {
+  EightCharactersWords,
+  NineCharactersWords,
+  TenCharactersWords,
+} from "../LibraryWords";
 
 export interface WordsObject {
   id: number;
@@ -36,6 +40,8 @@ type StateType = {
   resetRows: number;
   comeReset: boolean;
   arraywordPlateRecord: any;
+  switchRightWord: WordsObject[];
+  switchRightWordArr: any;
   paletteColors: string[];
 };
 
@@ -170,10 +176,46 @@ const transformWordArray = (): string[] => {
 
 let initRightWordArray: string[] = transformWordArray();
 
+const initRightWordEight: WordsObject =
+  EightCharactersWords[Math.floor(Math.random() * EightCharactersWords.length)];
+
+const transformWordArrayEight = (): string[] => {
+  let rightWordArray: string[] = [];
+
+  for (let i = 0; i < initRightWordEight.word.length; i++) {
+    rightWordArray[i] = initRightWordEight.word.charAt(i);
+  }
+
+  return rightWordArray;
+};
+
+let initRightWordArrayEight: string[] = transformWordArrayEight();
+
+const initRightWordTen: WordsObject =
+  TenCharactersWords[Math.floor(Math.random() * TenCharactersWords.length)];
+
+const transformWordArrayTen = (): string[] => {
+  let rightWordArray: string[] = [];
+
+  for (let i = 0; i < initRightWordTen.word.length; i++) {
+    rightWordArray[i] = initRightWordTen.word.charAt(i);
+  }
+
+  return rightWordArray;
+};
+
+let initRightWordArrayTen: string[] = transformWordArrayTen();
+
 // INITIAL STATE
 export const INITIAL_STATE = {
   category: 9,
+  switchRightWord: [initRightWordEight, initRightWord, initRightWordTen],
   rightWords: initRightWord,
+  switchRightWordArr: [
+    initRightWordArrayEight,
+    initRightWordArray,
+    initRightWordArrayTen,
+  ],
   rightWordArray: initRightWordArray,
   threeFirstChar: [
     { id: 1, word: initRightWordArray[1] },
@@ -365,6 +407,13 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     });
   };
 
+  const handleChangeRightWord = (rightWord: WordsObject) => {
+    dispatch({
+      type: REDUCER_ACTION_TYPE.CHANGE_CURRENT,
+      payload: rightWord,
+    });
+  };
+
   const handleChangeRightWordArray = (newRightWordArray: string[]) => {
     dispatch({
       type: REDUCER_ACTION_TYPE.CHANGE_CURRENT_ARRAY,
@@ -424,6 +473,7 @@ const noteGameContext = (INITIAL_STATE: StateType) => {
     handleFirstChar,
     handleChangeInput,
     handleMatchingChar,
+    handleChangeRightWord,
     handleChangeRightWordArray,
     handleWordTemplate,
     handleResetRows,
@@ -451,6 +501,7 @@ const initContextState: noteGameContextType = {
   handleChangeInput: () => {},
   handleMatchingChar: () => {},
   handleWordTemplate: () => {},
+  handleChangeRightWord: () => {},
   handleChangeRightWordArray: () => {},
   winningOrLooSing: () => {},
   endGameMessage: () => {},

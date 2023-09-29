@@ -454,6 +454,24 @@ handleFirstChar,
 ...
 } = useContext(userGameContext);`
 
+**Switch between three Categories**
+<br>
+I figure out that precalling all the \*\*three initializer functions\*\* enhancing our category switch inside **INITIAL_STATE** of GameContext.tsx file and affecting their results inside one **array** (`switchRightWordArr`) lead to fix re-render useEffect throughout our function `discloseThreeCharacters()` inside \*\*App.tsx\*\*.
+
+We need to perform such actions into `discloseThreeCharacters()`:
+
+-**First** We Look for the particular item of the rightword according to our primar affectation of rightword inside the array `switchRightWord`
+
+-**Second** Create locally a New Array that pick the primar affection matching word before, and transform it into an **array** of char.
+
+-**Third** Takes that new Array to build our threeFirstChar **state** variables.
+
+-**Fourth** we call two functions to ensure effectively the re-rendering everytime we change **category**:
+
+- `discloseThreeCharacters()` //build our Three char and new right word gaming to consider
+
+- `handleReset()` // reload our app and allow effectively the displaying of our **three first characters**
+
 And **That Is It!**
 
 ### Mobile Responsiveness

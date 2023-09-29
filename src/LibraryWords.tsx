@@ -174,7 +174,7 @@ export const EightCharactersWords: WordsObject[] = [
   },
   {
     id: 18,
-    word: "bargain",
+    word: "beginner",
   },
   {
     id: 19,

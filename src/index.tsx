@@ -29,6 +29,8 @@ const [
   rightWords,
   rightWordArray,
   wordPlate,
+  switchRightWord,
+  switchRightWordArr,
   paletteColors,
   endMsgGame,
   currentImg,
@@ -47,6 +49,8 @@ const [
   INITIAL_STATE.rightWords,
   INITIAL_STATE.rightWordArray,
   INITIAL_STATE.wordPlate,
+  INITIAL_STATE.switchRightWord,
+  INITIAL_STATE.switchRightWordArr,
   INITIAL_STATE.paletteColors,
   INITIAL_STATE.endMsgGame,
   INITIAL_STATE.currentImg,
@@ -69,6 +73,8 @@ root.render(
       rightWords={rightWords}
       rightWordArray={rightWordArray}
       wordPlate={wordPlate}
+      switchRightWord={switchRightWord}
+      switchRightWordArr={switchRightWordArr}
       paletteColors={paletteColors}
       endMsgGame={endMsgGame}
       currentImg={currentImg}
