@@ -5,7 +5,7 @@
 <br>
 <br>
 
-## <img with="20px" height="20px" src="./link-solid.svg"/> View live [here](https://beinrain06.github.io/words-letters-game/)
+<img with="20px" height="20px" src="./link-solid.svg"/> View live [here](https://beinrain06.github.io/words-letters-game/)
 
 <br>
 
@@ -23,4 +23,4 @@
   >
 - Reset the Game
 
-### [view code](https://github.com/BeinRain06/words-letters-game.git)
+[view code](https://github.com/BeinRain06/words-letters-game.git)
