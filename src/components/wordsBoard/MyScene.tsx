@@ -388,6 +388,10 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
 
   const [wordTypedObj, setWordTypedObj] = useState<WordStorageType[]>([]);
 
+  const [goodCharTypedObj, setGoodCharTypedObj] = useState<WordStorageType[]>(
+    []
+  );
+
   const [guessWordObj, setGuessWordObj] = useState<WordStorageType[]>([]);
 
   const {
@@ -475,15 +479,8 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
         //sort items by ascending order (--id reference-- )
         tempWordTypedHolderObj.sort((itemA, itemB) => itemA.id - itemB.id);
 
-        console.log("tempWordTypedHolderObj:", tempWordTypedHolderObj);
-
-        //**==> PROBLEM GRABBING SPAN ELEMENTS TAGS DOM --> TO DISPLAY CHARACTERS */
-        // fill the three column boxes of the first row of the game;
-        itemsRef_1.current.forEach((elt, i) => {
-          if (elt) {
-            elt.innerText = tempWordTypedHolderObj[i].char;
-          }
-        });
+        // record an instance of three char
+        setGoodCharTypedObj(tempWordTypedHolderObj);
 
         const active_index = currentIndexActiveRow;
 
@@ -491,19 +488,11 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
 
         const rowEndIndex = rowStartIndex + columnsBox!.length;
 
-        console.log("rowStartIndex in three Char :", rowStartIndex);
-
-        console.log("rowEndIndex in three Char :", rowEndIndex);
-
+        //init the first row boxes with three char
         for (let j = rowStartIndex; j < rowEndIndex; j++) {
           const boxElement = document.getElementById(`input_box_${j}`);
 
           if (boxElement) {
-            console.log(
-              `tempWordTypedHolderObj[${j - rowStartIndex}].char :`,
-              tempWordTypedHolderObj[j - rowStartIndex].char
-            );
-
             const charRetrieve = tempWordTypedHolderObj[j - rowStartIndex].char;
 
             boxElement.innerText = charRetrieve.toUpperCase();
@@ -621,12 +610,29 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
 
       for (let j = rowStartIndex; j < rowEndIndex; j++) {
         const boxElement = document.getElementById(`input_box_${j}`);
-        console.log("box :", boxElement);
-        console.log("j - rowStartIndex: ", j - rowStartIndex);
         const k = j - rowStartIndex;
-        if (boxElement && eltObj[k]) {
-          console.log(`eltObj[${k}]`, eltObj[k]);
-          boxElement!.innerText = eltObj[k].char;
+
+        if (eltObj.length === 0) {
+          console.log("no yeah!");
+
+          if (boxElement && goodCharTypedObj[k]) {
+            console.log(`goodCharTypedObj[${k}]`, goodCharTypedObj[k]);
+            const charRetrieve = goodCharTypedObj[k].char;
+
+            boxElement!.innerText = charRetrieve.toUpperCase();
+          }
+        } else {
+          console.log("yeah!");
+          if (boxElement) {
+            const isPosElt = eltObj[k] ? true : false;
+
+            if (isPosElt) {
+              const charRetrieve = eltObj[k].char;
+              boxElement!.innerText = charRetrieve.toUpperCase();
+            } else {
+              boxElement!.innerText = "";
+            }
+          }
         }
       }
     }
