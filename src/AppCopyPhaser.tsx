@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
-import TemplateCharacters from "./components/wordsBoard/TemplateCharacters";
-import { WordsObject } from "./LibraryWords";
+import TemplateCharacters from "./components/wordsBoard/TemplateCharacters.js";
+import { WordsObject } from "./LibraryWords.tsx";
 import {
   NineCharactersWords,
   EightCharactersWords,
   TenCharactersWords,
-} from "./LibraryWords";
+} from "./LibraryWords.tsx";
 
-import { userGameContext } from "./context/GameContext";
+import { userGameContext } from "./context/GameContext.tsx";
+import MySelectedScene from "./components/wordsBoard/MySelectedScene.ts";
 
 import {
   COBRA,
@@ -22,7 +23,9 @@ import {
 import DOWN from "./chevron-down-solid.svg";
 import UP from "./chevron-up-solid.svg";
 
-import "./App.css";
+/* import "./App.css"; */
+import "./AppCopyPhaser.css";
+import { Game } from "phaser";
 
 export const App = () => {
   const [isOpen, setOpen] = useState<boolean>(false);
@@ -94,7 +97,34 @@ export const App = () => {
     HIMITSU,
   ];
 
+  //PHASER GAME CONFIG
+
+  const gameRef = useRef<Game>();
+  const [template, setTemplate] = useState("9"); // initalized template : 09 characters
+
   useEffect(() => {
+    const config = {
+      type: Phaser.AUTO,
+      scale: {
+        mode: Phaser.Scale.RESIZE, // maintain aspect ratio
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        /*  width: 594,
+        height: 324, */
+      },
+      parent: "phaser-container",
+      scene: [MySelectedScene],
+    };
+
+    gameRef.current = new Phaser.Game(config);
+
+    return () => {
+      gameRef.current?.destroy(true);
+    };
+  }, []);
+
+  // 1. used to fill 03 charactrers to the template when the component mount
+
+  /* useEffect(() => {
     const transformWordArray = (initRightWord): string[] => {
       let rightWordArray: string[] = [];
 
@@ -181,9 +211,11 @@ export const App = () => {
 
     discloseThreeCharacters();
     handleReset();
-  }, [category]);
+  }, [category]); */
 
-  useEffect(() => {
+  // 2. used to switch template
+
+  /* useEffect(() => {
     const miniTemplate = (category): void => {
       switch (category) {
         case 8:
@@ -207,13 +239,7 @@ export const App = () => {
     currentPicture();
 
     miniTemplate(category);
-  }, [category, currentImg, score]);
-
-  /*  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]); */
+  }, [category, currentImg, score]); */
 
   const handleTogglerButton = async (
     e: React.MouseEvent<HTMLButtonElement>
@@ -571,8 +597,12 @@ export const App = () => {
           name="category"
           id="word_category"
           className="input_category"
-          defaultValue="9"
-          onChange={handleCategory}
+          value={template}
+          onChange={(e) =>
+            handleCategory(e, {
+              setTemplate,
+            })
+          }
         >
           <option value="8">08 characters</option>
           <option value="9">09 characters</option>
@@ -580,7 +610,7 @@ export const App = () => {
         </select>
       </div>
       <div className="showcase_game" data-selection="1" ref={caseRef}>
-        <TemplateCharacters
+        {/*  <TemplateCharacters
           category={category}
           threeFirstChar={threeFirstChar}
           wordEntered={wordEntered}
@@ -588,7 +618,10 @@ export const App = () => {
           countBoo={countBoo}
           inputRef={inputRef}
           resetRows={resetRows}
-        />
+        /> */}
+
+        {/* canvas phaser game template */}
+        <div id="phaser-container"></div>
 
         <div className="template_score">
           <p className="current_step">

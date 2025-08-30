@@ -3,7 +3,7 @@ import {
   EightCharactersWords,
   NineCharactersWords,
   TenCharactersWords,
-} from "../LibraryWords";
+} from "../dictionnary/LibraryWords";
 
 export interface WordsObject {
   id: number;
@@ -67,7 +67,9 @@ const enum REDUCER_ACTION_TYPE {
 
 type CategoryActionType = {
   type: REDUCER_ACTION_TYPE.CHANGE_CATEGORY;
-  field: string;
+  /*  field: string;
+  data:string;
+   */
   data: string;
 };
 
@@ -242,10 +244,16 @@ export const INITIAL_STATE = {
 
 export const reducer = (state: StateType, action: ActionType) => {
   switch (action.type) {
-    case REDUCER_ACTION_TYPE.CHANGE_CATEGORY:
+    /* case REDUCER_ACTION_TYPE.CHANGE_CATEGORY:
       return {
         ...state,
         [action.field]: +action.data,
+      }; */
+    case REDUCER_ACTION_TYPE.CHANGE_CATEGORY:
+      return {
+        ...state,
+        /*  [action.field]: +action.data, */
+        category: +action.data,
       };
     case REDUCER_ACTION_TYPE.CHANGE_CURRENT:
       return {
@@ -350,12 +358,22 @@ export const reducer = (state: StateType, action: ActionType) => {
 const noteGameContext = (INITIAL_STATE: StateType) => {
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  const handleCategory = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+  const handleCategory = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    { setTemplate }
+  ): void => {
     console.log("value:", e.target.value);
+
+    const newValue = e.target.value;
+
+    // change template useState in App.tsx
+    setTemplate(newValue);
+
+    // affect new value to state: **category**
     dispatch({
       type: REDUCER_ACTION_TYPE.CHANGE_CATEGORY,
-      field: e.target.name,
-      data: e.target.value,
+      /*  field: e.target.name, */
+      data: newValue,
     });
   };
 

@@ -177,8 +177,13 @@
     gap: 0.5rem;
   }
 
+  .title_category {
+    color: #cfcfcf;
+    font-size: 0.9rem;
+  }
+
   .input_category {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     padding: 0.25rem;
   }
 
@@ -376,10 +381,12 @@
     height: 38px;
     display: flex;
     align-items: center;
-    /* color:#4a4a88; */
+    /* display: grid;
+    grid-auto-columns: 1fr;
+    grid-template-rows: 100%; */
   }
 
-  .mini_row[data-selection="0"] {
+  /* .mini_row[data-selection="0"] {
     display: none;
   }
 
@@ -389,9 +396,9 @@
 
   .mini_row[data-selection="2"] {
     display: none;
-  }
+  } */
 
-  .mini_row[data-selection="0"].active,
+  /* .mini_row[data-selection="0"].active,
   .mini_row[data-selection="1"].active,
   .mini_row[data-selection="2"].active {
     display: flex;
@@ -408,7 +415,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-  }
+  } */
 
   /*structure confirm*/
 
@@ -426,7 +433,8 @@
     padding: 5px 10px;
     margin: 0.5rem 0.15rem 0;
     color: #cfcfcf;
-    background-color: #333;
+    /* background-color: #272626; */
+    background-color: #2b2a2a;
     outline: none;
     border: 1px solid transparent;
     border-radius: 3px;
@@ -602,10 +610,10 @@
     width: 23.1em;
   }
 
-  .mini_row[data-selection="0"] .char_box {
+  /* .mini_row[data-selection="0"] .char_box {
     width: 2.6em;
     height: 36px;
-  }
+  } */
 
   .restart_game {
     /* left: 45%;

@@ -1,0 +1,45 @@
+/* Template Input Insertion */
+
+.char_box_input {
+  width: 100%;
+  height: 100%;
+  margin: 0 2px;
+  /*  background-color: #2e2d2d; */
+  background-color: #3b3b3b;
+  border-top: 1px solid #2d6863;
+  box-shadow: 0px 1px 2px #2e8079;
+}
+
+/* Template Game Container */
+
+.words_container {
+  width: 60%;
+  max-width: 490px;
+  height: 21rem;
+  /* max-height: 21rem; */
+  padding-top: 1rem;
+  display: grid;
+  grid-template-columns: 100%;
+  grid-auto-rows: 1.6rem;
+  row-gap: 10px;
+}
+
+.word_row {
+  width: 100%;
+  height: 2rem;
+  /*  display: grid;
+  grid-auto-columns: auto;
+  grid-auto-rows: 100%; */
+  display: flex;
+  flex-direction: row;
+  column-gap: 5px;
+}
+
+.word_row .char_box {
+  width: min(4.5rem, 80%);
+  color: white;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  display: grid;
+  place-items: center;
+}

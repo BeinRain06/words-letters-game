@@ -1,8 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { GameProvider, INITIAL_STATE } from "./context/GameContext";
+/* import { GameProvider, INITIAL_STATE } from "./context/GameContext"; */
+import {
+  NewGameContextProvider,
+  INITIAL_STATE,
+} from "./context/NewGameContext";
 
-import { App } from "./App";
+/* import { App } from "./App"; */
+
+/* import { App } from "./AppCopyPhaser"; */
+
+import { App } from "./AppNewTest";
 
 /* const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -12,11 +20,52 @@ root.render(
     </AppProvider>
   </React.StrictMode>
 ); */
+
 const rootElement = document.getElementById("root");
 
 if (!rootElement) throw new Error("Failed to find the root element");
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+// destructuring syntax
+const [
+  category,
+  guessWord,
+  levelGame,
+  score,
+  winOrLoose,
+  gameOverText,
+  currentIndexActiveRow,
+  isClickReset,
+] = [
+  INITIAL_STATE.category,
+  INITIAL_STATE.guessWord,
+  INITIAL_STATE.levelGame,
+  INITIAL_STATE.score,
+  INITIAL_STATE.winOrLoose,
+  INITIAL_STATE.gameOverText,
+  INITIAL_STATE.currentIndexActiveRow,
+  INITIAL_STATE.isClickReset,
+];
+
+root.render(
+  <React.StrictMode>
+    <NewGameContextProvider
+      category={category}
+      guessWord={guessWord}
+      levelGame={levelGame}
+      score={score}
+      winOrLoose={winOrLoose}
+      gameOverText={gameOverText}
+      currentIndexActiveRow={currentIndexActiveRow}
+      isClickReset={isClickReset}
+    >
+      <App />
+    </NewGameContextProvider>
+  </React.StrictMode>
+);
+
+/* const root = ReactDOM.createRoot(document.getElementById("root"));
 
 const [
   category,
@@ -86,4 +135,4 @@ root.render(
       <App />
     </GameProvider>
   </React.StrictMode>
-);
+); */
