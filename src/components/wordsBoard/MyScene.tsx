@@ -67,46 +67,83 @@ export type WordStorageType = {
   statusFlag: string;
 };
 
-export const TemplateCharInput = ({ category }: { category: number }) => {
-  const [countColumns, setCountColumns] = useState({
-    0: [0, 1, 2, 3, 4, 5, 6, 7],
-    1: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-    2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-  });
+export const TemplateCharInput = forwardRef(
+  ({ category }: { category: number }, ref) => {
+    const [countColumns, setCountColumns] = useState({
+      0: [0, 1, 2, 3, 4, 5, 6, 7],
+      1: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+      2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    });
 
-  const [columnsBox, setColumnsBox] = useState<number[] | undefined>([]);
-  const itemsRef = useRef<SpanType["arg"]>([]);
+    const [columnsBox, setColumnsBox] = useState<number[] | undefined>([]);
+    const itemsRef = useRef<SpanType["arg"]>([]);
 
-  //useEffect pick mini-template Toggler to display
-  useEffect(() => {
-    if (category === 8) {
-      setColumnsBox(countColumns[0]);
-    } else if (category === 9) {
-      setColumnsBox(countColumns[1]);
-    } else if (category === 10) {
-      setColumnsBox(countColumns[2]);
-    }
-  }, [category]);
+    const handleInputDisplay = (typeAction, newValueArrObj?) => {
+      console.log("enter handleInputDisplay");
 
-  /* const affectStyle = {
+      const active_index = 0;
+
+      const rowStartIndex = active_index * columnsBox!.length;
+
+      const rowEndIndex = rowStartIndex + columnsBox!.length;
+
+      if (typeAction === "wordTyped") {
+        for (let i = 0; i < rowEndIndex; i++) {
+          const boxElement = document.getElementById(`mini_input_box_${i}`);
+
+          if (boxElement) {
+            boxElement.innerText = newValueArrObj[i]
+              ? newValueArrObj[i].char
+              : "";
+          }
+        }
+      } else if (typeAction === "validation") {
+        for (let i = 0; i < rowEndIndex; i++) {
+          const boxElement = document.getElementById(`mini_input_box_${i}`);
+
+          if (boxElement) {
+            boxElement.innerText = "";
+          }
+        }
+      }
+    };
+
+    //recognize the call of handleWordentered Fn into the parent container
+    useImperativeHandle(ref, () => ({
+      handleInputDisplay: handleInputDisplay,
+    }));
+
+    //useEffect pick mini-template Toggler to display
+    useEffect(() => {
+      if (category === 8) {
+        setColumnsBox(countColumns[0]);
+      } else if (category === 9) {
+        setColumnsBox(countColumns[1]);
+      } else if (category === 10) {
+        setColumnsBox(countColumns[2]);
+      }
+    }, [category]);
+
+    /* const affectStyle = {
     width: "100%",
     height: "100%",
     margin: "0 2px",
     border: " 1px solid #4a4a88",
   }; */
 
-  return (
-    <>
-      {columnsBox?.map((elt, i) => (
-        <span
-          key={`input_box_${i}`}
-          id={`input_box_${i}`}
-          className="char_box_input"
-        ></span>
-      ))}
-    </>
-  );
-};
+    return (
+      <>
+        {columnsBox?.map((elt, i) => (
+          <span
+            key={`mini_input_box_${i}`}
+            id={`mini_input_box_${i}`}
+            className="char_box_input"
+          ></span>
+        ))}
+      </>
+    );
+  }
+);
 
 export const TemplateWordGame1 = ({ category }: { category: number }) => {
   const wordsContainRef = useRef<HTMLDivElement>(null);
@@ -143,6 +180,7 @@ export const TemplateWordGame1 = ({ category }: { category: number }) => {
   } = useContext(newGameContextInstance);
 
   //useEffect pick mini-template Toggler to display
+
   useEffect((): any => {
     // execute and fill three char in the first row of the game
     pickThreeChar();
@@ -153,7 +191,7 @@ export const TemplateWordGame1 = ({ category }: { category: number }) => {
   useEffect(() => {
     if (isClickReset) {
       // reset all boxes between index 0 and current index active row
-      emptyColumnsValue();
+      emptyColumnsBoxes();
 
       //empty words obj store
       setWordTypedObj([]);
@@ -161,12 +199,9 @@ export const TemplateWordGame1 = ({ category }: { category: number }) => {
 
       //reset some state var in NewGameContext.tsx
       handleCurrentActiveRow(0);
-      handleWinOrLoose();
+      handleWinOrLoose(false);
       handleLevelGame(1);
       handleScoreGame(0);
-
-      // execute and fill three char in the first row of the game
-      pickThreeChar();
     }
   }, [isClickReset]);
 
@@ -178,7 +213,7 @@ export const TemplateWordGame1 = ({ category }: { category: number }) => {
   }, []);
 
   // (RESET) empty the canvas box
-  const emptyColumnsValue = () => {
+  const emptyColumnsBoxes = () => {
     for (let i = 0; i <= currentIndexActiveRow; i++) {
       const rowStartIndex = i * columnsBox!.length;
       const rowEndIndex = rowStartIndex + columnsBox!.length;
@@ -388,6 +423,10 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
 
   const [wordTypedObj, setWordTypedObj] = useState<WordStorageType[]>([]);
 
+  const [arrListWordTypedObj, setArrListWordTypedObj] = useState<
+    WordStorageType[][]
+  >([]);
+
   const [goodCharTypedObj, setGoodCharTypedObj] = useState<WordStorageType[]>(
     []
   );
@@ -395,132 +434,234 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
   const [guessWordObj, setGuessWordObj] = useState<WordStorageType[]>([]);
 
   const {
-    state: { category, guessWord, currentIndexActiveRow, isClickReset },
+    state: {
+      guessWord,
+      levelGame,
+      gameOverText,
+      winOrLoose,
+      category,
+      currentIndexActiveRow,
+      isClickReset,
+    },
     handleGuessWord,
     handleLevelGame,
     handleScoreGame,
     handleCurrentActiveRow,
     handleWinOrLoose,
+    handleGameOverText,
+    handleClickReset,
+    handleIsEndGame,
   } = useContext(newGameContextInstance);
 
   //recognize the call of handleWordentered Fn into the parent container
   useImperativeHandle(ref, () => ({
     handleWordEntered: handleWordEntered,
+    handleValidateInput: handleValidateInput,
   }));
 
-  //pick three char
-  const pickThreeChar = useCallback(
-    (wordToGuess: { id: number; word: string }) => {
-      let tempWordTypedHolderObj: WordStorageType[] = [];
-      let tempGuessWordHolderObj: WordStorageType[] = [];
+  //useEffect pick mini-template Toggler to display
+  useEffect((): any => {
+    //select Game Word to Guess
+    callWordToGuess();
 
-      let lastRandomNumber: number = -1;
+    async function callWordToGuess() {
+      const wordToGuess = await selectWordToGuess();
 
-      if (wordTypedObj.length === 0) {
-        //initialize string Obj in ObjStore
-        console.log("wordToGuess:", wordToGuess);
-        const grabInnerWordToGuess = wordToGuess.word;
+      console.log("wordToGuess useEffect:", wordToGuess);
 
-        for (let i = 0; i < grabInnerWordToGuess.length; i++) {
-          const itemObjTyped: WordStorageType = {
-            id: i,
-            char: "",
-            statusFlag: "",
-          };
+      pickThreeChar(wordToGuess);
+    }
 
-          const itemObjGuess: WordStorageType = {
-            id: i,
-            char: grabInnerWordToGuess[i],
-            statusFlag: "",
-          };
+    return () => (itemsRef_1.current = []);
+  }, [category, columnsBox, isClickReset]);
 
-          // preset word Object
+  useEffect(() => {
+    if (isClickReset) {
+      // reset all boxes between index 0 and current index active row
+      emptyColumnsBoxes();
 
-          tempWordTypedHolderObj = [...tempWordTypedHolderObj, itemObjTyped];
+      //empty words obj store
+      setWordTypedObj([]);
+      setGuessWordObj([]);
 
-          tempGuessWordHolderObj = [...tempGuessWordHolderObj, itemObjGuess];
-        }
+      //reset some state var in NewGameContext.tsx
+      handleCurrentActiveRow(0);
+      handleWinOrLoose(false);
+      handleLevelGame(1);
+      handleScoreGame(0);
+      handleClickReset(false);
+      handleGameOverText("");
 
-        setTimeout(() => {
-          setWordTypedObj(tempWordTypedHolderObj);
-          setGuessWordObj(tempGuessWordHolderObj);
-        }, 3000);
+      //select Game Word to Guess
+      selectWordToGuess();
+    }
+  }, [isClickReset, columnsBox]);
 
-        // pick 03 random characters and fill string Obj;
+  // state indicating if the GAME is OVER
+  useEffect(() => {
+    if (gameOverText === "YOU LOOSE!") {
+      /*  handleGameOverText("YOU LOOSE!"); */
 
-        let j = 0;
-        while (j <= 2) {
-          // choose a random number between 0 and arr.length --[3]-times
-          const randomNumber = Math.floor(
-            Math.random() * (grabInnerWordToGuess.length - 0)
-          );
+      console.log("YOU LOOSE!");
+      handleIsEndGame(true);
+    } else if (gameOverText === "YOU WIN!") {
+      /*  handleGameOverText("YOU WIN!"); */
 
-          if (randomNumber !== lastRandomNumber) {
-            tempWordTypedHolderObj = [
-              {
-                id: randomNumber,
-                char: grabInnerWordToGuess[randomNumber],
-                statusFlag: "",
-              },
-              ...tempWordTypedHolderObj.filter(
-                (elt) => elt.id !== randomNumber
-              ),
-            ];
+      console.log("YOU WIN!");
+      handleIsEndGame(true);
+    }
+  }, [gameOverText]);
 
-            lastRandomNumber = randomNumber;
-            j++;
-          }
-        }
+  // (RESET) empty the canvas box
+  const emptyColumnsBoxes = () => {
+    for (let i = 0; i <= currentIndexActiveRow; i++) {
+      const rowStartIndex = i * columnsBox!.length;
+      const rowEndIndex = rowStartIndex + columnsBox!.length;
 
-        setTimeout(() => {
-          setWordTypedObj(tempWordTypedHolderObj);
-        }, 3000);
-
-        //sort items by ascending order (--id reference-- )
-        tempWordTypedHolderObj.sort((itemA, itemB) => itemA.id - itemB.id);
-
-        // record an instance of three char
-        setGoodCharTypedObj(tempWordTypedHolderObj);
-
-        const active_index = currentIndexActiveRow;
-
-        const rowStartIndex = active_index * columnsBox!.length;
-
-        const rowEndIndex = rowStartIndex + columnsBox!.length;
-
-        //init the first row boxes with three char
-        for (let j = rowStartIndex; j < rowEndIndex; j++) {
-          const boxElement = document.getElementById(`input_box_${j}`);
-
-          if (boxElement) {
-            const charRetrieve = tempWordTypedHolderObj[j - rowStartIndex].char;
-
-            boxElement.innerText = charRetrieve.toUpperCase();
-          }
-
-          console.log("boxElement in three Char :", boxElement);
+      for (let j = rowStartIndex; j < rowEndIndex; j++) {
+        const boxElement = document.getElementById(`input_box_${j}`);
+        if (boxElement) {
+          boxElement.innerText = "";
+          boxElement.style.backgroundColor = ""; // reset background color
         }
       }
-    },
-    [columnsBox]
-  );
+    }
+  };
+
+  //pick three char
+
+  const pickThreeChar = (wordToGuess: { id: number; word: string }) => {
+    let tempWordTypedHolderObj: WordStorageType[] = [];
+    let tempGuessWordHolderObj: WordStorageType[] = [];
+
+    let lastRandomNumber: number = -1;
+
+    console.log("wordTypedObj :", wordTypedObj);
+
+    const wordTypedPresentChar = wordTypedObj.filter(
+      (item, i) => item.char !== ""
+    );
+
+    //initialize string Obj in ObjStore
+    console.log("wordToGuess:", wordToGuess);
+    const grabInnerWordToGuess = wordToGuess.word;
+
+    for (let i = 0; i < grabInnerWordToGuess.length; i++) {
+      const itemObjTyped: WordStorageType = {
+        id: i,
+        char: "",
+        statusFlag: "",
+      };
+
+      const itemObjGuess: WordStorageType = {
+        id: i,
+        char: grabInnerWordToGuess[i],
+        statusFlag: "",
+      };
+
+      // preset word Object
+
+      tempWordTypedHolderObj = [...tempWordTypedHolderObj, itemObjTyped];
+
+      tempGuessWordHolderObj = [...tempGuessWordHolderObj, itemObjGuess];
+    }
+
+    setTimeout(() => {
+      setWordTypedObj(tempWordTypedHolderObj);
+      setGuessWordObj(tempGuessWordHolderObj);
+    }, 3000);
+
+    // pick 03 random characters and fill string Obj;
+
+    let j = 0;
+    while (j <= 2) {
+      // choose a random number between 0 and arr.length --[3]-times
+      const randomNumber = Math.floor(
+        Math.random() * (grabInnerWordToGuess.length - 0)
+      );
+
+      if (randomNumber !== lastRandomNumber) {
+        tempWordTypedHolderObj = [
+          {
+            id: randomNumber,
+            char: grabInnerWordToGuess[randomNumber],
+            statusFlag: "",
+          },
+          ...tempWordTypedHolderObj.filter((elt) => elt.id !== randomNumber),
+        ];
+
+        lastRandomNumber = randomNumber;
+        j++;
+      }
+    }
+
+    setTimeout(() => {
+      setWordTypedObj(tempWordTypedHolderObj);
+    }, 3000);
+
+    //sort items by ascending order (--id reference-- )
+    tempWordTypedHolderObj.sort((itemA, itemB) => itemA.id - itemB.id);
+
+    console.log("tempWordTypedHolderObj:", tempWordTypedHolderObj);
+
+    // record an instance of three char
+    setGoodCharTypedObj(tempWordTypedHolderObj);
+
+    const active_index = currentIndexActiveRow;
+
+    const rowStartIndex = active_index * columnsBox!.length;
+
+    const rowEndIndex = rowStartIndex + columnsBox!.length;
+
+    console.log("rowStartIndex :", rowStartIndex);
+
+    console.log("rowEndIndex :", rowEndIndex);
+
+    //init the first row boxes with three char
+    for (let j = rowStartIndex; j < rowEndIndex; j++) {
+      const boxElement = document.getElementById(`input_box_${j}`);
+
+      if (boxElement) {
+        /*  const charRetrieve = tempWordTypedHolderObj[j - rowStartIndex].char; */
+
+        console.log(
+          `tempWordTypedHolderObj[${j}] :`,
+          tempWordTypedHolderObj[j]
+        );
+
+        /* const charRetrieve = tempWordTypedHolderObj[j].char; */
+
+        let charRetrieve: string = "";
+        if (tempWordTypedHolderObj[j] === undefined) {
+          charRetrieve = "";
+        } else {
+          charRetrieve = tempWordTypedHolderObj[j].char;
+        }
+
+        boxElement.innerText = charRetrieve.toUpperCase();
+      }
+
+      console.log("boxElement in three Char :", boxElement);
+    }
+  };
 
   // select word to guess
-  const selectWordToGuess = useCallback(() => {
+
+  const selectWordToGuess = async () => {
     let arrSelect;
 
     switch (category) {
       case 8:
         arrSelect = EightCharactersWords;
-        setColumnsBox(countColumns[0]);
+        await setColumnsBox(countColumns[0]);
         break;
       case 9:
         arrSelect = NineCharactersWords;
-        setColumnsBox(countColumns[1]);
+        await setColumnsBox(countColumns[1]);
         break;
       case 10:
         arrSelect = TenCharactersWords;
-        setColumnsBox(countColumns[2]);
+        await setColumnsBox(countColumns[2]);
         break;
       default:
         throw new Error(
@@ -540,55 +681,205 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
 
     console.log("wordGuessSelection in selectWordToGuess:", wordGuessSelection);
 
-    setTimeout(() => {
-      handleGuessWord(wordGuessSelection);
-    }, 3000);
+    handleGuessWord(wordGuessSelection.word);
 
-    // execute and fill three char in the first row of the game
-    pickThreeChar(wordGuessSelection);
-  }, [pickThreeChar]);
+    return wordGuessSelection;
+  };
 
-  //useEffect pick mini-template Toggler to display
-  useEffect((): any => {
-    //select Game Word to Guess
-    selectWordToGuess();
+  const fillBgColorBoxesRowByDefault = (hexColorValue) => {
+    if (currentIndexActiveRow < 9) {
+      const i = currentIndexActiveRow;
 
-    return () => (itemsRef_1.current = []);
-  }, [category, columnsBox]);
-
-  useEffect(() => {
-    if (isClickReset) {
-      // reset all boxes between index 0 and current index active row
-      emptyColumnsValue();
-
-      //empty words obj store
-      setWordTypedObj([]);
-      setGuessWordObj([]);
-
-      //reset some state var in NewGameContext.tsx
-      handleCurrentActiveRow(0);
-      handleWinOrLoose();
-      handleLevelGame(1);
-      handleScoreGame(0);
-
-      //select Game Word to Guess
-      selectWordToGuess();
-    }
-  }, [isClickReset, columnsBox]);
-
-  // (RESET) empty the canvas box
-  const emptyColumnsValue = () => {
-    for (let i = 0; i <= currentIndexActiveRow; i++) {
       const rowStartIndex = i * columnsBox!.length;
-      const rowEndIndex = rowStartIndex + columnsBox!.length;
 
+      const rowEndIndex = rowStartIndex + columnsBox!.length;
       for (let j = rowStartIndex; j < rowEndIndex; j++) {
         const boxElement = document.getElementById(`input_box_${j}`);
-        if (boxElement) {
-          boxElement.innerText = "";
-          boxElement.style.backgroundColor = ""; // reset background color
+        boxElement!.style.backgroundColor = hexColorValue;
+        setTimeout(() => {
+          boxElement!.style.opacity = "0.85";
+        }, 650);
+        boxElement!.style.opacity = "1";
+      }
+    }
+  };
+
+  const checkAndCompareWords = (occurence: string) => {
+    const i = currentIndexActiveRow;
+
+    const rowStartIndex = i * columnsBox!.length;
+
+    const rowEndIndex = rowStartIndex + columnsBox!.length;
+
+    console.log("guessWordObj --check-compare-- :", guessWordObj);
+    console.log("wordTypedObj --check-compare-- :", wordTypedObj);
+
+    let newWordTypedObj = wordTypedObj;
+
+    // check proper length
+    newWordTypedObj =
+      newWordTypedObj.length > guessWordObj.length
+        ? newWordTypedObj.slice(0, guessWordObj.length)
+        : newWordTypedObj;
+
+    if (occurence === "first time") {
+      //compare wordTypedObj and guessWordObj
+      guessWordObj.map((item, i) => {
+        // update statusFlag
+        if (item.char === newWordTypedObj[i].char) {
+          /* newWordTypedObj = handleWordTypedStatusFlag(
+            newWordTypedObj,
+            "green",
+            i
+          ); */
+
+          newWordTypedObj[i].statusFlag = "green";
+        } else {
+          /* newWordTypedObj = handleWordTypedStatusFlag(
+            newWordTypedObj,
+            "red",
+            i
+          ); */
+
+          newWordTypedObj[i].statusFlag = "red";
+        }
+      });
+    } else if (occurence === "n times") {
+      //compare wordTypedObj with each word in arrListWordObj
+      for (let k = 0; k < arrListWordTypedObj.length; k++) {
+        const previousWord = arrListWordTypedObj[k];
+
+        console.log("previousWord n times:", previousWord);
+
+        previousWord.map((item, i) => {
+          // update statusFlag
+          if (
+            item.char === newWordTypedObj[i].char &&
+            item.statusFlag !== "green"
+          ) {
+            /* newWordTypedObj = handleWordTypedStatusFlag(
+              newWordTypedObj,
+              "yellow",
+              i
+            ); */
+            newWordTypedObj[i].statusFlag = "yellow";
+          }
+        });
+      }
+
+      //compare wordTypedObj and guessWordObj
+      guessWordObj.map((item, i) => {
+        // update statusFlag
+        if (item.char === newWordTypedObj[i].char) {
+          /* newWordTypedObj = handleWordTypedStatusFlag(
+            newWordTypedObj,
+            "green",
+            i
+          ); */
+
+          newWordTypedObj[i].statusFlag = "green";
+        } else if (newWordTypedObj[i].statusFlag !== "yellow") {
+          /* newWordTypedObj = handleWordTypedStatusFlag(
+            newWordTypedObj,
+            "red",
+            i
+          ); */
+
+          newWordTypedObj[i].statusFlag = "red";
+        }
+      });
+
+      console.log(
+        "--newWordTypedObj after n times 3 -- -check&compare- :",
+        newWordTypedObj
+      );
+    }
+
+    return newWordTypedObj;
+  };
+
+  const playColorChar = (wordTypedObj: WordStorageType[]) => {
+    const i = currentIndexActiveRow;
+
+    const rowStartIndex = i * columnsBox!.length;
+
+    const rowEndIndex = rowStartIndex + columnsBox!.length;
+
+    let recordGreenChar: WordStorageType[] = [];
+
+    let countGreenChar: number = 0;
+
+    /*  console.log("rowStartIndex --playColorChar-- :", rowStartIndex);
+
+    console.log("rowEndIndex --playColorChar-- :", rowEndIndex); */
+
+    for (let j = rowStartIndex; j < rowEndIndex; j++) {
+      const boxElement = document.getElementById(`input_box_${j}`);
+
+      /* console.log("wordTypedObj --playColorChar-- :", wordTypedObj); */
+
+      const color = wordTypedObj[j - rowStartIndex].statusFlag;
+
+      if (boxElement) {
+        if (color === "green") {
+          setTimeout(() => {
+            //await little times
+          }, 2000);
+
+          boxElement.style.backgroundColor = "green";
+          countGreenChar++;
+        } else if (color === "yellow") {
+          setTimeout(() => {
+            //await little times
+          }, 2000);
+
+          boxElement.style.backgroundColor = "yellow";
+        } else if (color === "red") {
+          setTimeout(() => {
+            //await little times
+          }, 2000);
+
+          boxElement.style.backgroundColor = "red";
         }
       }
+    }
+
+    wordTypedObj.map((item, k) => {
+      if (item.statusFlag === "green") {
+        recordGreenChar.push({
+          id: item.id,
+          char: item.char,
+          statusFlag: item.statusFlag,
+        });
+      } else {
+        recordGreenChar.push({
+          id: item.id,
+          char: "",
+          statusFlag: "",
+        });
+      }
+    });
+
+    recordGreenChar = recordGreenChar.sort(
+      (itemA, itemB) => itemA.id - itemB.id
+    );
+
+    return { recordGreenChar, countGreenChar };
+  };
+
+  const initiateNewRowEntry = (recordGreenChar, newIndexActive) => {
+    // do something;
+    const i = newIndexActive;
+
+    const rowStartIndex = i * columnsBox!.length;
+
+    const rowEndIndex = rowStartIndex + columnsBox!.length;
+
+    for (let j = rowStartIndex; j < rowEndIndex; j++) {
+      const boxElement = document.getElementById(`input_box_${j}`);
+      const charRecord = recordGreenChar[j - rowStartIndex].char;
+
+      boxElement!.innerText = charRecord.toUpperCase();
     }
   };
 
@@ -597,8 +888,8 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
     //catch wordTypedObj
     setWordTypedObj(eltObj);
 
-    console.log("guessWordObj :", guessWordObj);
-    console.log("eltObj :", eltObj);
+    /*  console.log("guessWordObj :", guessWordObj);
+      console.log("eltObj :", eltObj); */
 
     // fill char in the specific row
     if (currentIndexActiveRow < 9) {
@@ -613,16 +904,14 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
         const k = j - rowStartIndex;
 
         if (eltObj.length === 0) {
-          console.log("no yeah!");
-
           if (boxElement && goodCharTypedObj[k]) {
-            console.log(`goodCharTypedObj[${k}]`, goodCharTypedObj[k]);
+            /*  console.log(`goodCharTypedObj[${k}]`, goodCharTypedObj[k]); */
+
             const charRetrieve = goodCharTypedObj[k].char;
 
             boxElement!.innerText = charRetrieve.toUpperCase();
           }
         } else {
-          console.log("yeah!");
           if (boxElement) {
             const isPosElt = eltObj[k] ? true : false;
 
@@ -635,6 +924,82 @@ export const TemplateWordGame = forwardRef((props, ref): any => {
           }
         }
       }
+    }
+  };
+
+  //handle VaLiDate InPuT
+  const handleValidateInput = () => {
+    //first state blue color wave
+    fillBgColorBoxesRowByDefault("#12496e");
+
+    const isList = arrListWordTypedObj.length !== 0 ? true : false;
+
+    let wordToAnime: WordStorageType[];
+
+    if (!isList) {
+      wordToAnime = checkAndCompareWords("first time");
+    } else {
+      wordToAnime = checkAndCompareWords("n times");
+    }
+
+    wordToAnime = wordToAnime.sort((itemA, itemB) => itemA.id - itemB.id);
+
+    console.log("--word-to-anime :", wordToAnime);
+
+    //play columns boxes bg-color
+    const greenCharPackObj = playColorChar(wordToAnime);
+
+    const selectedGreenCharObj = greenCharPackObj.recordGreenChar;
+
+    /*   console.log("greenCharPackObj --+-- :", greenCharPackObj); */
+
+    //save green char obj
+    setGoodCharTypedObj(selectedGreenCharObj);
+
+    //update score
+    const countGreenChar = greenCharPackObj.countGreenChar;
+
+    const newScore: number = 10 * countGreenChar;
+
+    handleScoreGame(newScore);
+
+    // add word displayed to array words list typed
+    setArrListWordTypedObj([...arrListWordTypedObj, wordToAnime]);
+
+    //index row active update
+    const isGameContinuing = currentIndexActiveRow < 9 ? true : false;
+
+    if (isGameContinuing) {
+      //check winning or loosing Game
+      const arrStatGreen = selectedGreenCharObj.filter(
+        (item) => item.statusFlag === "green"
+      );
+
+      if (arrStatGreen.length === guessWord.length) {
+        handleWinOrLoose(true);
+        handleGameOverText("YOU WIN!");
+        return;
+      } else if (
+        arrStatGreen.length !== guessWord.length &&
+        currentIndexActiveRow === 8
+      ) {
+        handleWinOrLoose(false);
+        handleGameOverText("YOU LOOSE!");
+        return;
+      }
+
+      //update level game
+      handleLevelGame(levelGame + 1);
+      //update current active row
+      const newIndexActive = currentIndexActiveRow + 1;
+
+      handleCurrentActiveRow(newIndexActive);
+
+      // ==> NEXT : HERE WRITE --INITIATE NEXT ROW ENTRY FN
+
+      initiateNewRowEntry(selectedGreenCharObj, newIndexActive);
+    } else {
+      handleIsEndGame(true);
     }
   };
 

@@ -37,6 +37,7 @@ const [
   gameOverText,
   currentIndexActiveRow,
   isClickReset,
+  isEndGame,
 ] = [
   INITIAL_STATE.category,
   INITIAL_STATE.guessWord,
@@ -46,6 +47,7 @@ const [
   INITIAL_STATE.gameOverText,
   INITIAL_STATE.currentIndexActiveRow,
   INITIAL_STATE.isClickReset,
+  INITIAL_STATE.isEndGame,
 ];
 
 root.render(
@@ -59,6 +61,7 @@ root.render(
       gameOverText={gameOverText}
       currentIndexActiveRow={currentIndexActiveRow}
       isClickReset={isClickReset}
+      isEndGame={isEndGame}
     >
       <App />
     </NewGameContextProvider>

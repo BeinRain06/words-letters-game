@@ -43,32 +43,29 @@ export const App = () => {
       winOrLoose,
       gameOverText,
       isClickReset,
+      isEndGame,
     },
     handleCategory,
+    handleGameOverText,
     handleGuessWord,
     handleWinOrLoose,
     handleClickReset,
+    handleIsEndGame,
   } = useContext(newGameContextInstance);
 
   const childRef = useRef<any>(null);
+  const inputChildRef = useRef<any>(null);
 
   const caseRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  /* const miniRowEight = useRef<HTMLDivElement>(null);
-  const miniRowNine = useRef<HTMLDivElement>(null);
-  const miniRowTen = useRef<HTMLDivElement>(null); */
 
   const miniRowRef = useRef<HTMLDivElement>(null);
 
-  const warningRef = useRef<HTMLParagraphElement>(null);
-
   const bntHideRef = useRef<HTMLDivElement>(null);
   const bntLaunchRef = useRef<HTMLDivElement>(null);
-
-  let idTmp: number = 0;
-  let newThreeChar: WordsObject[] = [];
+  const btnConfirmRef = useRef<HTMLButtonElement>(null);
 
   const imageFitting = [
     COBRA,
@@ -86,10 +83,52 @@ export const App = () => {
 
   const [template, setTemplate] = useState("9"); // initalized template : 09 characters
 
+  const [valueInputObj, setValueInput] = useState<ValueInputObjType[]>([]);
+
+  const [expectedWord, setExpectedWord] = useState("");
+
+  const [warningPop, setWarningPop] = useState(false);
+
+  const [totalScore, setTotalScore] = useState(90);
+
+  //useEffect warning msg
+  useEffect(() => {
+    if (warningPop) {
+      setTimeout(() => {
+        btnConfirmRef.current?.classList.add("active_confirm");
+        setWarningPop(false);
+      }, 1500);
+      btnConfirmRef.current?.classList.remove("active_confirm");
+    }
+  }, [warningPop]);
+
   // useEffect pick template Game and choose the picture to showcase
   useEffect(() => {
-    currentPicture();
+    if (levelGame % 2) {
+      currentPicture();
+    }
   }, [levelGame]);
+
+  // total score update
+  useEffect(() => {
+    //to do something may be --- look Fn GAME OVER
+    if (score !== 0) {
+      /* console.log("update score"); */
+    }
+  }, [score]);
+
+  // winning or loosing game update
+
+  useEffect(() => {
+    if (!winOrLoose) {
+      setExpectedWord(guessWord);
+    }
+  }, [isEndGame]);
+
+  //total score due to category
+  useEffect(() => {
+    setTotalScore(10 * category);
+  }, [category]);
 
   const handleTogglerButton = async (
     e: React.MouseEvent<HTMLButtonElement>
@@ -110,19 +149,20 @@ export const App = () => {
     }
   };
 
-  const triggerResetApp = () => {
+  const triggerInitApp = (label: string) => {
     setOpen(false);
+
     //trigger update in MyScene.tsx
-    handleClickReset();
+    handleClickReset(true);
+
+    if (label === "restart") handleIsEndGame(false);
   };
 
-  const showDisplay = (e: React.MouseEvent): void => {
+  /* const showDisplay = (e: React.MouseEvent): void => {
     console.log("target : ", e.target);
     console.log("select select :", imageRef.current);
     console.log("end message game", gameOverText);
-    /* console.log(" reset rows rows", resetRows);
-    console.log("end beginnin come RESet", comeReset); */
-  };
+  }; */
 
   interface MyHTMLElement {
     caseGame: HTMLDivElement | null;
@@ -139,123 +179,20 @@ export const App = () => {
   const currentPicture = (): void => {
     let myCurrentPicture: string = "";
 
-    if (levelGame === 1) {
-      myCurrentPicture = imageFitting[0];
-    }
-
-    if (levelGame % 2 === 1) {
-      myCurrentPicture = imageFitting[levelGame - 1];
-    }
-
-    if (levelGame === 9) {
-      myCurrentPicture = imageFitting[levelGame - 1];
-    }
+    myCurrentPicture = imageFitting[levelGame - 1];
 
     setCurrentImg(myCurrentPicture);
   };
 
-  const selectMiniRow = (): Element[] => {
-    let miniRowElt;
-    let miniSpanArray: Element[] = [];
-
-    // commented because of new CHANGE
-
-    /* if (category === 9)
-      miniRowElt = miniRowNine.current?.querySelectorAll(".char_box");
-    if (category === 8)
-      miniRowElt = miniRowEight.current?.querySelectorAll(".char_box");
-    if (category === 10)
-      miniRowElt = miniRowTen.current?.querySelectorAll(".char_box");
-
-    if (miniRowElt !== undefined) {
-      for (let i = 0; i < miniRowElt.length; i++) {
-        miniSpanArray.push(miniRowElt[i]);
-      }
-    } */
-
-    return miniSpanArray;
+  const handleCategoryUpdate = (event) => {
+    //update in NewGameContext.tsx
+    handleCategory(event, { setTemplate });
   };
 
-  /* const validateInput = (): void => {
-    let previousInputWord: string[] = wordEntered;
-    let currentRightWord: string[] = rightWordArray;
-    const levelUp: number = level + 1;
-
-    let areaWordMoveRecord: any[] = [];
-    let newWordTemplate: any[] = [];
-
-    if (previousInputWord.length === currentRightWord.length) {
-      for (let i = 0; i < currentRightWord.length; i++) {
-        if (currentRightWord[i] === previousInputWord[i]) {
-          if (
-            threeFirstChar[0].id === i ||
-            threeFirstChar[1].id === i ||
-            threeFirstChar[2].id === i
-          ) {
-            newWordTemplate.push({
-              id: i,
-              val: previousInputWord[i],
-              status: "given",
-              bg: "yellow",
-              rad: "50%",
-            });
-          } else {
-            newWordTemplate.push({
-              id: i,
-              val: previousInputWord[i],
-              status: "match",
-              bg: "green",
-              rad: "50%",
-            });
-          }
-        } else {
-          newWordTemplate.push({
-            id: i,
-            val: previousInputWord[i],
-            status: "unmatch",
-            bg: "red",
-            rad: "50%",
-          });
-        }
-      }
-
-      handleMatchingChar(newWordTemplate);
-
-      for (let i = 0; i < newWordTemplate.length; i++) {
-        areaWordMoveRecord[i] = newWordTemplate[i];
-      }
-
-      console.log("framework area", areaWordMoveRecord);
-
-      arraywordPlateRecord.push(areaWordMoveRecord);
-      console.log("area area", arraywordPlateRecord);
-
-      console.log("area area 00", arraywordPlateRecord[0]);
-
-      console.log("word entered imc", wordEntered);
-      console.log("right word array imc", rightWordArray);
-
-      if (inputRef.current !== null) {
-        inputRef.current.value = "";
-      }
-    } else {
-      return;
-    }
-
-    changeCount();
-    changeBooleanCount();
-    updateLevel(levelUp);
-
-    console.log("give me count here", count);
-
-    currentPicture();
-
-    handleWordTemplate(arraywordPlateRecord);
-  }; */
-
-  /* const handleExit = (): void => {
-    winningOrLooSing();
-  }; */
+  const handleExit = (): void => {
+    //close the browser page
+    window.close();
+  };
 
   const handleChangeInputValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
@@ -263,14 +200,11 @@ export const App = () => {
     console.log("guessword AppNewTest:", guessWord);
     console.log("newValue :", newValue);
 
-    const isMuchChar = newValue.length > guessWord.length ? true : false;
-
-    if (isMuchChar) {
-      setTimeout(() => {
-        console.log("hirr, Yeah!");
-        warningRef.current?.classList.add("standing");
-      }, 2400);
-      warningRef.current?.classList.remove("standing");
+    // check warning pop up
+    if (newValue.length > guessWord.length) {
+      setWarningPop(true);
+    } else if (newValue.length === guessWord.length) {
+      btnConfirmRef.current?.classList.add("active_confirm");
     }
 
     //  bring word to the limit guessword length in case entry characters exceed
@@ -291,30 +225,74 @@ export const App = () => {
       []
     );
 
+    //record an instance inputValue in the component
+    setValueInput(newValueArrObj);
+
+    //continuation triggers of the same Fn in MyScene.tsx component using ForwardRef in <TemPlateGame/> and <TemplateCharInput/> component
     if (childRef.current && childRef.current.handleWordEntered) {
       childRef.current.handleWordEntered(newValueArrObj);
     }
+
+    if (inputChildRef.current && inputChildRef.current.handleInputDisplay) {
+      inputChildRef.current.handleInputDisplay("wordTyped", newValueArrObj);
+    }
+  };
+
+  const triggerValidation = (e: React.MouseEvent<HTMLButtonElement>) => {
+    playBtnFocus(e);
+
+    //empty the input html tag
+    inputRef.current!.value = "";
+
+    //continuation triggers of the same Fn in MyScene.tsx component using ForwardRef in <TemPlateGame/> and <TemplateCharInput/> component
+    if (childRef.current && childRef.current.handleValidateInput) {
+      childRef.current.handleValidateInput();
+    }
+
+    if (inputChildRef.current && inputChildRef.current.handleInputDisplay) {
+      inputChildRef.current.handleInputDisplay("validation");
+    }
+  };
+
+  const playBtnFocus = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const targetElt = e.target as HTMLElement;
+    setTimeout(() => {
+      //add anim
+      targetElt.focus();
+      btnConfirmRef.current?.classList.add("active_confirm");
+    }, 1500);
+
+    //remove anim
+    btnConfirmRef.current?.classList.remove("active_confirm");
   };
 
   return (
     <div
       id="container_game"
-      className={winOrLoose ? "container overlap" : "container"}
-      onClick={showDisplay}
+      className={isEndGame ? "container overlap" : "container"}
     >
       <div
         id="end_game_wrapper"
-        style={{ display: winOrLoose ? "block" : "none" }}
+        style={{ display: isEndGame ? "block" : "none" }}
         className="end_game_wrapper"
       >
-        <div className={winOrLoose ? "end_game add_msg" : "end_game"}>
-          <p className="special_msg"> {gameOverText}</p>
+        <div className={isEndGame ? "end_game add_msg" : "end_game"}>
+          <div className="special_msg">
+            <p className="special_msg_1"> {gameOverText}</p>
+
+            {!winOrLoose && (
+              <p className="expected_word">
+                <span>answer :</span> <span>{expectedWord}</span>
+              </p>
+            )}
+          </div>
+
           <div className="wrapper_reset">
             <button
               id="rest_game"
               type="button"
               className="btn_special rest_game"
-              onClick={triggerResetApp}
+              onClick={() => triggerInitApp("restart")}
             >
               RESTART
             </button>
@@ -323,7 +301,7 @@ export const App = () => {
               id="exit_game"
               type="button"
               className="btn_special exit_game"
-              /* onClick={handleExit} */
+              onClick={handleExit}
             >
               EXIT
             </button>
@@ -340,8 +318,8 @@ export const App = () => {
           name="category"
           id="word_category"
           className="input_category"
-          defaultValue="9"
-          onChange={(event) => handleCategory(event, { setTemplate })}
+          value={template}
+          onChange={(event) => handleCategoryUpdate(event)}
         >
           <option value="8">08 characters</option>
           <option value="9">09 characters</option>
@@ -359,10 +337,7 @@ export const App = () => {
           resetRows={resetRows}
         /> */}
 
-        <TemplateWordGame
-          /* category={category} */
-          ref={childRef}
-        />
+        <TemplateWordGame /* category={category} */ ref={childRef} />
 
         <div className="template_score">
           <p className="current_step">
@@ -380,8 +355,12 @@ export const App = () => {
           <div className="score_in">
             <p className="score_content">
               score:
-              <span id="score" className="score">
+              <span id="score_1" className="score">
                 {score}
+              </span>
+              /
+              <span id="score_2" className="score">
+                {totalScore}
               </span>
             </p>
           </div>
@@ -436,56 +415,9 @@ export const App = () => {
                 }
               >
                 <div ref={miniRowRef} className="mini_row active">
-                  <TemplateCharInput category={category} />
+                  <TemplateCharInput category={category} ref={inputChildRef} />
                 </div>
 
-                {/* <div
-                  ref={miniRowEight}
-                  className={category === 8 ? "mini_row active" : "mini_row"}
-                  data-selection="0"
-                >
-                  <span id="0" className="char_box"></span>
-                  <span id="1" className="char_box"></span>
-                  <span id="2" className="char_box"></span>
-                  <span id="3" className="char_box"></span>
-                  <span id="4" className="char_box"></span>
-                  <span id="5" className="char_box"></span>
-                  <span id="6" className="char_box"></span>
-                  <span id="7" className="char_box"></span>
-                </div> */}
-
-                {/* <div
-                  ref={miniRowNine}
-                  className={category === 9 ? "mini_row active" : "mini_row"}
-                  data-selection="1"
-                >
-                  <span id="0" className="char_box"></span>
-                  <span id="1" className="char_box"></span>
-                  <span id="2" className="char_box"></span>
-                  <span id="3" className="char_box"></span>
-                  <span id="4" className="char_box"></span>
-                  <span id="5" className="char_box"></span>
-                  <span id="6" className="char_box"></span>
-                  <span id="7" className="char_box"></span>
-                  <span id="8" className="char_box"></span>
-                </div> */}
-
-                {/* <div
-                  ref={miniRowTen}
-                  className={category === 10 ? "mini_row active" : "mini_row"}
-                  data-selection="2"
-                >
-                  <span id="0" className="char_box"></span>
-                  <span id="1" className="char_box"></span>
-                  <span id="2" className="char_box"></span>
-                  <span id="3" className="char_box"></span>
-                  <span id="4" className="char_box"></span>
-                  <span id="5" className="char_box"></span>
-                  <span id="6" className="char_box"></span>
-                  <span id="7" className="char_box"></span>
-                  <span id="8" className="char_box"></span>
-                  <span id="9" className="char_box"></span>
-                </div> */}
                 <div className="structure_confirm">
                   <input
                     type="text"
@@ -496,8 +428,8 @@ export const App = () => {
                     placeholder="enter_word"
                   />
 
-                  <p ref={warningRef} className="warning_characters">
-                    maxi characters reached !
+                  <p className="warning_characters">
+                    {warningPop && <> maxi characters reached !</>}
                   </p>
 
                   <div className="confirm_input">
@@ -505,7 +437,8 @@ export const App = () => {
                       type="button"
                       id="btn_confirm"
                       className="btn_confirm"
-                      /*  onClick={validateInput} */
+                      onClick={triggerValidation}
+                      ref={btnConfirmRef}
                     >
                       validate
                     </button>
@@ -522,12 +455,12 @@ export const App = () => {
         </div>
         <div className="restart_game">
           <div className="add_game">
-            {winOrLoose ? (
+            {isEndGame ? (
               <button
                 type="button"
                 id="btn_play"
                 className="btn_play_again"
-                onClick={triggerResetApp}
+                onClick={() => triggerInitApp("reset")}
               >
                 PLAY AGAIN
               </button>
@@ -538,13 +471,13 @@ export const App = () => {
             )}
           </div>
 
-          {!winOrLoose && (
+          {!isEndGame && (
             <div className="reset_input">
               <button
                 type="button"
                 id="btn_reset"
                 className="btn_reset_game"
-                onClick={triggerResetApp}
+                onClick={() => triggerInitApp("reset")}
               >
                 RESET
               </button>

@@ -134,7 +134,7 @@ export const EightCharactersWords: WordsObject[] = [
   },
   {
     id: 8,
-    word: "hospital",
+    word: "humility",
   },
   {
     id: 9,
@@ -142,7 +142,7 @@ export const EightCharactersWords: WordsObject[] = [
   },
   {
     id: 10,
-    word: "feature",
+    word: "fabulous",
   },
   {
     id: 11,
@@ -166,7 +166,7 @@ export const EightCharactersWords: WordsObject[] = [
   },
   {
     id: 16,
-    word: "cuisine",
+    word: "likeness",
   },
   {
     id: 17,

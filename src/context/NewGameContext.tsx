@@ -14,9 +14,9 @@ export type STATE_TYPE = {
   gameOverText: string;
   currentIndexActiveRow: number;
   isClickReset: boolean;
-  isInputChange: boolean;
   levelGame: number;
   score: number;
+  isEndGame: boolean;
 };
 
 // type of each element of STATE
@@ -42,6 +42,7 @@ type SCORE_GAME_ACTION_TYPE = {
 
 type WINLOOSE_ACTION_TYPE = {
   type: TABLE_ACTION_TYPE.WIN_LOOSE;
+  payload: boolean;
 };
 
 type GAME_OVER_TEXT_ACTION_TYPE = {
@@ -56,6 +57,12 @@ type CURRENT_INDEX_ACTIVE_ROW_ACTION_TYPE = {
 
 type CLICK_RESET_ACTION_TYPE = {
   type: TABLE_ACTION_TYPE.CLICK_RESET;
+  payload: boolean;
+};
+
+type END_GAME_ACTION_TYPE = {
+  type: TABLE_ACTION_TYPE.END_GAME;
+  payload: boolean;
 };
 
 // entire ACTION_TYPE
@@ -68,7 +75,8 @@ export type REDUCER_ACTION_TYPE =
   | WINLOOSE_ACTION_TYPE
   | GAME_OVER_TEXT_ACTION_TYPE
   | CURRENT_INDEX_ACTIVE_ROW_ACTION_TYPE
-  | CLICK_RESET_ACTION_TYPE;
+  | CLICK_RESET_ACTION_TYPE
+  | END_GAME_ACTION_TYPE;
 
 // Initialize State
 export const INITIAL_STATE: STATE_TYPE = {
@@ -78,9 +86,9 @@ export const INITIAL_STATE: STATE_TYPE = {
   gameOverText: "",
   currentIndexActiveRow: 0,
   isClickReset: false,
-  isInputChange: false,
   levelGame: 1,
   score: 0,
+  isEndGame: false,
 };
 
 // define **reducer** fn for useReducer custom Hook
@@ -95,6 +103,7 @@ export const enum TABLE_ACTION_TYPE {
   INDEX_ACTIVE_ROW,
   CLICK_RESET,
   INPUT_CHANGE,
+  END_GAME,
 }
 
 const reducer = (state: STATE_TYPE, action: REDUCER_ACTION_TYPE) => {
@@ -128,7 +137,7 @@ const reducer = (state: STATE_TYPE, action: REDUCER_ACTION_TYPE) => {
       //do something;
       return {
         ...state,
-        winOrLoose: !state.winOrLoose,
+        winOrLoose: action.payload,
       };
     case TABLE_ACTION_TYPE.GAME_OVER_TEXT:
       //do something;
@@ -146,7 +155,13 @@ const reducer = (state: STATE_TYPE, action: REDUCER_ACTION_TYPE) => {
       //do something;
       return {
         ...state,
-        isClickReset: !state.isClickReset,
+        isClickReset: action.payload,
+      };
+    case TABLE_ACTION_TYPE.END_GAME:
+      //do something;
+      return {
+        ...state,
+        isEndGame: action.payload,
       };
     default:
       throw new Error("Error reducer NewGameContext");
@@ -192,8 +207,8 @@ const NewGameContextHook = (INITIAL_STATE: STATE_TYPE) => {
       payload: elt,
     });
 
-  const handleWinOrLoose = () =>
-    dispatch({ type: TABLE_ACTION_TYPE.WIN_LOOSE });
+  const handleWinOrLoose = (elt) =>
+    dispatch({ type: TABLE_ACTION_TYPE.WIN_LOOSE, payload: elt });
 
   const handleGameOverText = (elt: string) =>
     dispatch({
@@ -207,9 +222,16 @@ const NewGameContextHook = (INITIAL_STATE: STATE_TYPE) => {
       payload: elt,
     });
 
-  const handleClickReset = () =>
+  const handleClickReset = (elt: boolean) =>
     dispatch({
       type: TABLE_ACTION_TYPE.CLICK_RESET,
+      payload: elt,
+    });
+
+  const handleIsEndGame = (elt: boolean) =>
+    dispatch({
+      type: TABLE_ACTION_TYPE.END_GAME,
+      payload: elt,
     });
 
   return {
@@ -222,6 +244,7 @@ const NewGameContextHook = (INITIAL_STATE: STATE_TYPE) => {
     handleGameOverText,
     handleCurrentActiveRow,
     handleClickReset,
+    handleIsEndGame,
   };
 };
 
@@ -237,6 +260,7 @@ const initContextState: NewGameContextHookType = {
   handleGameOverText: () => {},
   handleCurrentActiveRow: () => {},
   handleClickReset: () => {},
+  handleIsEndGame: () => {},
 };
 
 //Context  creation
